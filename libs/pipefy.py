@@ -19,13 +19,13 @@ class Pipefy(object):
 
 
 
-    def request(self, query, headers={}):
+    def request(self, query, headers={}, schema : str = "query"):
         _headers = self.headers
         _headers.update(headers)
         session_request = requests.Session()
         response = session_request.post(
             self.endpoint,
-            json={ "query": query },
+            json={ schema : query },
             headers=_headers, 
             verify=False
         )
@@ -413,12 +413,23 @@ class Pipefy(object):
 
     def consultaFields(self, pipe_id, response_fields=None, headers={}):
       """ List fiels: Get fields by pipe identifier. """
+      
       response_fields = response_fields or ' cards_count phases { id name fields { id label editable } } start_form_fields { id label editable } '
       query = '{ pipe(id:%(pipe_id)s) { %(response_fields)s } }' % {
         'pipe_id': json.dumps(pipe_id),
         'response_fields': response_fields
       }
       return self.request(query, headers).get('data', {}).get('pipe', [])
+    
+    def changeEditableFields(self, id = None, label = None, editable = None, response_fields=None, headers={}):
+      """ Mutation: Change Name and Editable to Fields. """
+      
+      response_fields = response_fields or '{id: "%s", label: "%s", editable:  %s }' % (id, label, editable)
+      
+      query = '{ updatePhaseField(input:%(response_fields)s) { phase_field{   id   label   editable } } }' % {
+        'response_fields': response_fields
+      }
+      return self.request(query, headers, schema="mutation").get('data', {})
     
     def allCards(self, pipe_id, after=None, response_fields=None, headers={}):
         """ List cards: Get cards by pipe identifier. """

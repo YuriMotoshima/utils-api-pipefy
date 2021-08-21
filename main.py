@@ -13,11 +13,9 @@ if __name__ == "__main__":
     PIPE = getenv('PIPE')
     NONPHASES = getenv('NONPHASES')
 
-
     eng = Engine(token=TOKEN, host=HOST, pipe=PIPE, nonphases=NONPHASES, logger=logger)
     
     df = pd.DataFrame(data=eng.run_all_data_phases(), columns=eng.columns)
-    
     
     print("")
     
