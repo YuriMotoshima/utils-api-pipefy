@@ -185,7 +185,7 @@ class Pipefy(object):
     def phase(self, id, after = None, response_fields=None, headers={}):
         """ Show phase: Get a phase by its identifier. """
         if after:
-          response_fields = response_fields or 'pageInfo { endCursor hasNextPage } edges { node { id title finished_at updated_at createdBy { id name } assignees { id name email } comments { text } comments_count current_phase { name } done due_date fields { name value datetime_value field { id } array_value } labels { name } createdAt phases_history { phase { name id } created_at duration firstTimeIn lastTimeOut } url } }'
+          response_fields = response_fields or 'pageInfo { endCursor hasNextPage } edges { node { id title finished_at updated_at createdBy { id name } assignees { id name email } comments { text } comments_count current_phase { name } done due_date fields { name value datetime_value field { id } array_value  } labels { name } createdAt phases_history { phase { name id } created_at duration firstTimeIn lastTimeOut } url } }'
           query = '{ phase(id: %(id)s){ cards(after:%(after)s) {%(response_fields)s } } }' % {
               'id': json.dumps(id),
               'after':json.dumps(after),
@@ -413,7 +413,7 @@ class Pipefy(object):
 
     def consultaFields(self, pipe_id, response_fields=None, headers={}):
       """ List fiels: Get fields by pipe identifier. """
-      response_fields = response_fields or ' cards_count phases { id name fields { id label } } start_form_fields { id label } '
+      response_fields = response_fields or ' cards_count phases { id name fields { id label editable } } start_form_fields { id label editable } '
       query = '{ pipe(id:%(pipe_id)s) { %(response_fields)s } }' % {
         'pipe_id': json.dumps(pipe_id),
         'response_fields': response_fields

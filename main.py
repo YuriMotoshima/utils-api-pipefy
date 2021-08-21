@@ -1,7 +1,6 @@
 from os import getenv, getcwd
 from dotenv import load_dotenv
 import pandas as pd
-from libs.utilits_pipe import Pipe
 from libs.logger import logger
 from libs.engine import Engine
 
