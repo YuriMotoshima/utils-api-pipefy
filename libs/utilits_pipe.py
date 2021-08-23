@@ -357,13 +357,18 @@ class Pipe(Pipefy):
 
 
     @_timeit
-    def enable_fields(self, data : dict) -> NoReturn:
-        self.fields["fields"]
-        data.keys()
+    def enable_fields(self, data : dict) -> dict:
+        
+        data = list(set([x for n in data for x in n["fields"]]))
         
         list_enable = []
 
         for first_id in self.fields["fields"]:
-            for second_id in data.keys():
-                if first_id.get("id") == second_id and first_id.get("editable") == "true":
-                    list_enable.extend(', '.join('{id: "%s", label: "%s", "editable": %s}' % (second_id, first_id.get("nameField"), "true") ) )
+            if first_id["id"] in data and first_id["editable"] == True:
+                print(first_id["id"])
+                list_enable.append('{id: "%s", label: "%s", editable: %s}' % (first_id["id"], first_id["nameField"], "true") )
+
+        self.changeEditableFields(response_fields=list_enable)
+        
+        return list_enable
+        

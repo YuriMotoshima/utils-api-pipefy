@@ -423,7 +423,7 @@ class Pipefy(object):
     def changeEditableFields(self, id = None, label = None, editable = None, response_fields=None, headers={}):
       """ Mutation: Change Name and Editable to Fields. """
       
-      response_fields = response_fields or '{id: "%s", label: "%s", editable:  %s }' % (id, label, editable)
+      response_fields = ",".join([fr"{n}" for n in response_fields]) or '{id: "%s", label: "%s", editable:  %s }' % (id, label, editable)
       
       query = '{ updatePhaseField(input:%(response_fields)s) { phase_field{   id   label   editable } } }' % {
         'response_fields': response_fields

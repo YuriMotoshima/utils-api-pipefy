@@ -57,26 +57,24 @@ class Engine(Pipe):
             raise EngineExcept(e)
 
 
-    def run_update_phase_validation(self, data : dict, automatic_editable : str = None) -> NoReturn:
+    def run_update_phase_validation(self, data : list, automatic_editable : str = None) -> NoReturn:
         """
         Função "motor" de chamadas paralelizadas, feita para atualizar campos de vários cards ao mesmo tempo, de acordo com os dados passadas.
         
         Enviar em `data`:
         
             - card_id <== Número do card a ser atualizado
-            - fields <== [{}] Lista com dicionário informando o ID do field e Valor a ser preenchido.
+            - fields <== {} Dicionário informando o ID do field e Valor a ser preenchido.
             
         Exemplo `data`:
-            {
+            [{
                 "card_id":"12132131",
-                "fields":[
-                    {
+                "fields":{
                         "mensagem_de_duplicidade":"Card duplicado",
                         "dados_ok":"Não",
                         "title":"Card Improcedente"
                     }
-                ]
-            }
+            }]
         
         """
         try:
