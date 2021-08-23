@@ -18,7 +18,6 @@ class Pipefy(object):
         self.endpoint = f'https://{host}.pipefy.com/graphql'
 
 
-
     def request(self, query, headers={}, schema : str = "query"):
         _headers = self.headers
         _headers.update(headers)

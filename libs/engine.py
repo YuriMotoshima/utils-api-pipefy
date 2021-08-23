@@ -55,9 +55,6 @@ class Engine(Pipe):
         except Exception as e:
             self.logger.info(e)
             raise EngineExcept(e)
-    
-
-        
 
 
     def run_update_phase_validation(self, data : dict, automatic_editable : str = None) -> NoReturn:
