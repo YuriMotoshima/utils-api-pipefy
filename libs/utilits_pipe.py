@@ -1,3 +1,4 @@
+from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import NoReturn
 from libs.pipefy import Pipefy
@@ -256,7 +257,6 @@ class Pipe(Pipefy):
             self.logger.info(e)
             raise PipeExcept(e)
                 
-    
     def get_data_phase(self, phase_id : str) -> dict:
         """
         Função que pega todos os cards da phase selecionada fasendo a paginação de acordo com a tag (pageInfo) retornada pelo Pipefy.

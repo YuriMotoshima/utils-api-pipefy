@@ -1,4 +1,5 @@
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from datetime import date, datetime
 from typing import NoReturn
 from libs.utilits_pipe import Pipe
 
@@ -9,7 +10,18 @@ class Engine(Pipe):
     def __init__(self, token, host, pipe, nonphases, logger):
         super().__init__(token, host, pipe, nonphases, logger)
 
-
+    def _timeit(func):
+        def print_time(*args):
+            start = datetime.now()
+            print(f"{func.__name__} iniciado às {start}.")
+            func(*args)
+            end = datetime.now() - start
+            print(f"{func.__name__} finalizado às {datetime.now()}.\nTempo de execução (hh:mm:ss.ms) {end}")
+            
+        return print_time
+    
+    
+    @_timeit
     def run_all_data_phases(self) -> list:
         """
         Função "motor" de chamadas paralelizadas, feita para extratação de várias fases ao mesmo tempo, de acordo com os dados passados no arquivo .env.
@@ -40,10 +52,13 @@ class Engine(Pipe):
             return dados
         except Exception as e:
             self.logger.info(e)
-            raise EngineExcept(e)    
+            raise EngineExcept(e)
+    
+
+        
 
 
-    def run_update_phase_validation(self, data : dict) -> NoReturn:
+    def run_update_phase_validation(self, data : dict, automatic_editable : str = None) -> NoReturn:
         """
         Função "motor" de chamadas paralelizadas, feita para atualizar campos de vários cards ao mesmo tempo, de acordo com os dados passadas.
         
