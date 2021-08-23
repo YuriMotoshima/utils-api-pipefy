@@ -1,4 +1,5 @@
 from pandas.core.frame import DataFrame
+import pandas as pd
 from datetime import datetime
 import re
 
@@ -17,20 +18,33 @@ class DuplicatePipe():
         
     def remove_duplicate_to_data(self) -> DataFrame:
         """Função que remove a duplicidade do Pipefy de acordo com o campo ['ordem_de_servi_o']."""
+        
         try:
-            df = self.data
-            df["ordem_de_servi_o"] = df["ordem_de_servi_o"].apply(lambda a: int("".join(re.sub(r"[\D]", "", a))) if a else a )
+            data = self.data
 
-            df['createdAtData'] = df['createdAt'].apply(lambda a: datetime.strptime(a, '%Y-%m-%dT%H:%M:%S%z').date())
-            df['createdAtHora'] = df['createdAt'].apply(lambda a: datetime.strptime(a, '%Y-%m-%dT%H:%M:%S%z').time())
-            df.sort_values(by=['id', 'createdAtData', 'createdAtHora'], ascending=True, inplace=True)
-            df.reset_index(drop=True, inplace=True)
+            data['createdAtData'] = data['createdAt'].apply(lambda a: datetime.strptime(a, '%Y-%m-%dT%H:%M:%S%z').date())
+            data['createdAtHora'] = data['createdAt'].apply(lambda a: datetime.strptime(a, '%Y-%m-%dT%H:%M:%S%z').time())
             
-            data = df.loc[:, ["id", "ordem_de_servi_o", "origem", "current_phase", "createdAt", "createdAtData", "createdAtHora"]]
+            origens = list(set(data["origem"])) # <--- Tira a duplicidade da Lista
+            data_final = pd.DataFrame()
+            for origem in origens:
+                
+                df = data.copy()
+                
+                df = df.loc[df["origem"] == origem]
+                
+                df["ordem_de_servi_o"] = df["ordem_de_servi_o"].apply(lambda a: int("".join(re.sub(r"[\D]", "", a))) if a else a )
+                df.sort_values(by=['id', 'createdAtData', 'createdAtHora'], ascending=True, inplace=True)
+                df.reset_index(drop=True, inplace=True)
+                
+                df.loc[:, ["id", "ordem_de_servi_o", "origem", "current_phase", "createdAt", "createdAtData", "createdAtHora"]]
+                
+                df.drop_duplicates(subset='ordem_de_servi_o', keep='first', inplace=True)
+                df.reset_index(drop=True, inplace=True)
+                
+                data_final = pd.concat([data_final, df])
             
-            data.drop_duplicates(subset='ordem_de_servi_o', keep='first', inplace=True)
-            data.reset_index(drop=True, inplace=True)
-            
+            data = data_final
             return data
         except Exception as e:
             self.logger.info(e)
@@ -45,7 +59,7 @@ class DuplicatePipe():
         try:
             df = self.data
             origens = list(set(df["origem"])) # <--- Tira a duplicidade da Lista
-            json_data = {}
+            json_data = pd.DataFrame()
             for origem in origens:
                 
                 df_o = df.loc[df["origem"] == origem, ["id", "ordem_de_servi_o", "origem", "current_phase", "createdAt", "createdAtData", "createdAtHora"]]
@@ -60,8 +74,8 @@ class DuplicatePipe():
                 df_os_duplicadas = df_o.loc[~df_o['id'].isin(df_os_unicas['id'].tolist())]
                 df_os_duplicadas = df_os_duplicadas.loc[df_os_duplicadas["origem"] == origem]
                 df_os_duplicadas.reset_index(drop=True, inplace=True)
-                df_duplicates = [( i, 'OS com Card ativo.', 'Sim') for i in df_os_duplicadas["id"]]
-                json_data.update({ origem : df_duplicates })
+                
+                json_data = pd.concat([json_data, df_os_duplicadas])
             
             return json_data
         except Exception as e:

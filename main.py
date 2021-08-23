@@ -4,6 +4,8 @@ import pandas as pd
 from libs.logger import logger
 from libs.engine import Engine
 
+from libs.parse_duplicate import DuplicatePipe
+
 if __name__ == "__main__":
     
     load_dotenv(dotenv_path=fr"{getcwd()}\.env")

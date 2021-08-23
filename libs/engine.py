@@ -1,6 +1,7 @@
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import NoReturn
 from libs.utilits_pipe import Pipe
+from datetime import datetime
 
 class EngineExcept(Exception):
     pass
@@ -10,6 +11,16 @@ class Engine(Pipe):
         super().__init__(token, host, pipe, nonphases, logger)
 
 
+    def _timeit(func):
+        def print_time(*args):
+            start = datetime.now()
+            print(f"{func.__name__} iniciado as {start}.")
+            func(*args)
+            end = datetime.now() - start
+            print(f"{func.__name__} finalizado em {end} segundo.")
+        return print_time
+    
+    @_timeit
     def run_all_data_phases(self) -> list:
         """
         Função "motor" de chamadas paralelizadas, feita para extratação de várias fases ao mesmo tempo, de acordo com os dados passados no arquivo .env.
