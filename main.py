@@ -19,6 +19,9 @@ if __name__ == "__main__":
     
     df = pd.DataFrame(data=eng.run_all_data_phases(), columns=eng.columns)
     
+    df.to_excel("excluidos.xlsx")
+    
+    eng.run_delete_all_cards()
     
     print("")
     
