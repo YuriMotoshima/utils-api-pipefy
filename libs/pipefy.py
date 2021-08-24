@@ -420,15 +420,27 @@ class Pipefy(object):
       }
       return self.request(query, headers).get('data', {}).get('pipe', [])
     
-    def changeEditableFields(self, id = None, label = None, editable = None, response_fields=None, headers={}):
+    def updatePropertiesFields(self, id = None, label = None, editable = None, fields_attributes=None, headers={}):
       """ Mutation: Change Name and Editable to Fields. """
-      
-      response_fields = ",".join([fr"{n}" for n in response_fields]) or '{id: "%s", label: "%s", editable:  %s }' % (id, label, editable)
-      
-      query = '{ updatePhaseField(input:%(response_fields)s) { phase_field{   id   label   editable } } }' % {
-        'response_fields': response_fields
-      }
-      return self.request(query, headers, schema="mutation").get('data', {})
+      if fields_attributes:
+        update = [fr"{n}" for n in fields_attributes]
+        query = ''
+        for index, fields_attributes in enumerate(update):
+          
+          query += 'V%(index)s : updatePhaseField(input:%(fields_attributes)s) { phase_field{   id   label   editable } } , ' % {
+            'index': index,
+            'fields_attributes': fields_attributes
+          }
+          
+        query = '{%(query)s}' % { 'query' : query }
+        return self.request(query, headers, schema="mutation").get('data', {})
+      else:
+        fields_attributes = '{id: "%s", label: "%s", editable:  %s }' % (id, label, editable)
+        
+        query = '{ updatePhaseField(input:%(fields_attributes)s) { phase_field{   id   label   editable } } }' % {
+          'fields_attributes': fields_attributes
+        }
+        return self.request(query, headers, schema="mutation").get('data', {})
     
     def allCards(self, pipe_id, after=None, response_fields=None, headers={}):
         """ List cards: Get cards by pipe identifier. """

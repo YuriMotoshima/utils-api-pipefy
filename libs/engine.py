@@ -13,7 +13,7 @@ class Engine(Pipe):
 
 
     def _run_enable_disable_fields(func):
-        def parser_enable_disable(args, kwargs) -> list:
+        def parser_enable_disable(args, kwargs) -> tuple:
             data = list(set([x for n in kwargs["data"] for x in n["fields"]]))
             list_enable = []
             list_disable = []
@@ -27,7 +27,7 @@ class Engine(Pipe):
         
         def run(*args, **kwargs):
             lte, ltd = parser_enable_disable(args, kwargs)
-            # args[0].run_all_data_phases()
+            args[0].enable_fields(data=lte)
             start = datetime.now()
             print(f"{func.__name__} iniciado às {start}.")
             func(*args)
