@@ -12,18 +12,31 @@ class Engine(Pipe):
         super().__init__(token, host, pipe, nonphases, logger)
 
 
-    def _timeit(func):
-        def print_time(*args):
+    def _run_enable_disable_fields(func):
+        def parser_enable_disable(args, kwargs) -> list:
+            data = list(set([x for n in kwargs["data"] for x in n["fields"]]))
+            list_enable = []
+            list_disable = []
+
+            for first_id in args[0].fields["fields"]:
+                if first_id["id"] in data and first_id["editable"] == True:
+                    print(first_id["id"])
+                    list_enable.append('{id: "%s", label: "%s", editable: %s}' % (first_id["id"], first_id["nameField"], "false") )
+                    list_disable.append('{id: "%s", label: "%s", editable: %s}' % (first_id["id"], first_id["nameField"], "true") )
+            return list_enable, list_disable
+        
+        def run(*args, **kwargs):
+            lte, ltd = parser_enable_disable(args, kwargs)
+            # args[0].run_all_data_phases()
             start = datetime.now()
             print(f"{func.__name__} iniciado às {start}.")
             func(*args)
             end = datetime.now() - start
             print(f"{func.__name__} finalizado às {datetime.now()}.\nTempo de execução (hh:mm:ss.ms) {end}")
             
-        return print_time
+        return run
     
     
-    @_timeit
     def run_all_data_phases(self) -> list:
         """
         Função "motor" de chamadas paralelizadas, feita para extratação de várias fases ao mesmo tempo, de acordo com os dados passados no arquivo .env.
@@ -57,7 +70,8 @@ class Engine(Pipe):
             raise EngineExcept(e)
 
 
-    def run_update_phase_validation(self, data : list, automatic_editable : str = None) -> NoReturn:
+    @_run_enable_disable_fields
+    def run_update_fields_cards(self, data : list, automatic_editable : str = None) -> NoReturn:
         """
         Função "motor" de chamadas paralelizadas, feita para atualizar campos de vários cards ao mesmo tempo, de acordo com os dados passadas.
         

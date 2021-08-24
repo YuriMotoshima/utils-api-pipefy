@@ -366,7 +366,7 @@ class Pipe(Pipefy):
         for first_id in self.fields["fields"]:
             if first_id["id"] in data and first_id["editable"] == True:
                 print(first_id["id"])
-                list_enable.append('{id: "%s", label: "%s", editable: %s}' % (first_id["id"], first_id["nameField"], "true") )
+                list_enable.append('{id: "%s", label: "%s", editable: %s}' % (first_id["id"], first_id["nameField"], "false") )
 
         self.changeEditableFields(response_fields=list_enable)
         
