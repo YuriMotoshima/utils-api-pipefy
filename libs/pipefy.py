@@ -432,15 +432,17 @@ class Pipefy(object):
             'fields_attributes': fields_attributes
           }
           
-        query = '{%(query)s}' % { 'query' : query }
-        return self.request(query, headers, schema="mutation").get('data', {})
-      else:
+        query = 'mutation {%(query)s}' % { 'query' : query }
+        return self.request(query, headers).get('data', {})
+      elif id and label and editable:
         fields_attributes = '{id: "%s", label: "%s", editable:  %s }' % (id, label, editable)
         
         query = '{ updatePhaseField(input:%(fields_attributes)s) { phase_field{   id   label   editable } } }' % {
           'fields_attributes': fields_attributes
         }
         return self.request(query, headers, schema="mutation").get('data', {})
+      else:
+        raise PipefyException("Algo deu errado!")
     
     def allCards(self, pipe_id, after=None, response_fields=None, headers={}):
         """ List cards: Get cards by pipe identifier. """

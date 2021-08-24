@@ -329,7 +329,7 @@ class Pipe(Pipefy):
             
             super().__init__(token=self.TOKEN, host=self.HOST)
             response = self.updateFieldsCard(nodeId=card_id, response_fields=response_fields)
-            self.logger.info(response.text)
+            self.logger.info(f"Response: {response}")
         except Exception as e:
             self.logger.info(e)
             raise PipeExcept(e)
@@ -348,14 +348,14 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
 
 
-    def enable_fields(self, data : str ) -> NoReturn:
+    def change_properties_fields(self, data : str ) -> NoReturn:
         """
         Função que chama API do Pipefy que altera as propriedades de um campo.
         """
         try:
             super().__init__(token=self.TOKEN, host=self.HOST)
             response = self.updatePropertiesFields(fields_attributes=data)
-            self.logger.info(f"Response: {response.text}.")
+            self.logger.info(f"Response: {response}.")
         except Exception as e:
             self.logger.info(e)
             raise PipeExcept(e)

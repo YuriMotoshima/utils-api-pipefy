@@ -19,7 +19,7 @@ if __name__ == "__main__":
                  nonphases=NONPHASES, logger=logger)
 
     a = [{
-        'card_id': '12132131', 'fields': {'sla': 'Card duplicado', 'dados_ok': 'Não', 'prazo_anatel': 'Card Improcedente'}
+        'card_id': '12132131', 'fields': {'sla': 'Card duplicado', 'os_duplicada': 'Não', 'prazo_anatel': 'Card Improcedente'}
     }, {'card_id': '2312321342', 'fields': {'titulo': 'Card duplicado', 'etiqueta': 'Não', 'fe': 'Card Improcedente'}}]
 
     b = eng.run_update_fields_cards(data=a, automatic_editable="True")
