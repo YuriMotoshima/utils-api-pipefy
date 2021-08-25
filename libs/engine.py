@@ -21,15 +21,15 @@ class Engine(Pipe):
 
             for first_id in args[0].fields["fields"]:
                 if first_id["id"] in data and first_id["editable"] == False:
-                    list_enable.append('{id: "%s", label: "%s", editable: %s}' % (first_id["id"], first_id["nameField"], "true") )
-                    list_disable.append('{id: "%s", label: "%s", editable: %s}' % (first_id["id"], first_id["nameField"], "false") )
+                    list_enable.append('{id: "%s", label: "%s", editable: %s, uuid: "%s"}' % (first_id["id"], first_id["nameField"], "true", first_id["uuid"]) )
+                    list_disable.append('{id: "%s", label: "%s", editable: %s, uuid: "%s"}' % (first_id["id"], first_id["nameField"], "false", first_id["uuid"]) )
             return list_enable, list_disable
         
         def run(*args, **kwargs):
             start = datetime.now()
             print(f"{func.__name__} iniciado às {start}.")
             
-            lte, ltd = [ parser_enable_disable(args, kwargs) if kwargs["automatic_editable"] else (None,None) ]
+            lte, ltd = parser_enable_disable(args, kwargs) if kwargs["automatic_editable"] else (None,None)
             
             if lte:
                 try:
