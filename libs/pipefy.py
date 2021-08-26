@@ -413,22 +413,36 @@ class Pipefy(object):
     def consultaFields(self, pipe_id, response_fields=None, headers={}):
       """ List fiels: Get fields by pipe identifier. """
       
-      response_fields = response_fields or ' cards_count phases { id name fields { id label editable } } start_form_fields { id label editable } '
+      response_fields = response_fields or ' cards_count phases { id name fields { id label editable uuid } } start_form_fields { id label editable uuid } '
       query = '{ pipe(id:%(pipe_id)s) { %(response_fields)s } }' % {
         'pipe_id': json.dumps(pipe_id),
         'response_fields': response_fields
       }
       return self.request(query, headers).get('data', {}).get('pipe', [])
     
-    def changeEditableFields(self, id = None, label = None, editable = None, response_fields=None, headers={}):
+    def updatePropertiesFields(self, id = None, label = None, editable = None, uuid = None, fields_attributes=None, headers={}):
       """ Mutation: Change Name and Editable to Fields. """
-      
-      response_fields = ",".join([fr"{n}" for n in response_fields]) or '{id: "%s", label: "%s", editable:  %s }' % (id, label, editable)
-      
-      query = '{ updatePhaseField(input:%(response_fields)s) { phase_field{   id   label   editable } } }' % {
-        'response_fields': response_fields
-      }
-      return self.request(query, headers, schema="mutation").get('data', {})
+      if fields_attributes:
+        update = [fr"{n}" for n in fields_attributes]
+        query = ''
+        for index, fields_attributes in enumerate(update):
+          
+          query += 'V%(index)s : updatePhaseField(input:%(fields_attributes)s) { phase_field{   id   label  editable uuid } } , ' % {
+            'index': index,
+            'fields_attributes': fields_attributes
+          }
+          
+        query = 'mutation {%(query)s}' % { 'query' : query }
+        return self.request(query, headers).get('data', {})
+      elif id and label and editable and uuid:
+        fields_attributes = '{id: "%s", label: "%s", editable:  %s, uuid:  "%s" }' % (id, label, editable, uuid)
+        
+        query = '{ updatePhaseField(input:%(fields_attributes)s) { phase_field{   id   label   editable } } }' % {
+          'fields_attributes': fields_attributes
+        }
+        return self.request(query, headers, schema="mutation").get('data', {})
+      else:
+        raise PipefyException("Algo deu errado!")
     
     def allCards(self, pipe_id, after=None, response_fields=None, headers={}):
         """ List cards: Get cards by pipe identifier. """

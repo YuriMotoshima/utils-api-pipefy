@@ -76,7 +76,7 @@ class Pipe(Pipefy):
             
             self.phases_id = [n.get("id") for n in campos_pipefy["phases"] if not n.get("id") in self.NONPHASES]
             
-            self.fields = {"fields":[{"id": d.get("id"), "nameField":d.get("label"), "editable":d.get("editable")} for n in campos_pipefy['phases'] for d in n['fields']] + [{"id": n.get("id"), "nameField": n.get("label"), "editable":n.get("editable")} for n in campos_pipefy['start_form_fields']]}
+            self.fields = {"fields":[{"id": d.get("id"), "nameField":d.get("label"), "editable":d.get("editable"), "uuid":d.get("uuid")} for n in campos_pipefy['phases'] for d in n['fields']] + [{"id": n.get("id"), "nameField": n.get("label"), "editable":n.get("editable"), "uuid":n.get("uuid")} for n in campos_pipefy['start_form_fields']]}
 
             self.phases = {"phases" : [{ "id": d.get("id"), "nameFase": d.get("name"), "informacoes": [ "firstTimeIn", "lastTimeOut"] } for d in campos_pipefy['phases']]}
             
@@ -152,7 +152,6 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
         
         
-    
     def parse_phase_history(self, card : dict) -> dict:
         """
         Para cada card é tratado o campo phases_history:
@@ -171,7 +170,6 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
         
         
-    
     def get_fields(self, card : dict) -> dict:
         """
         Para cada card é tratado o campo fields:
@@ -191,7 +189,6 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
             
             
-    
     def parse_card(self, card : list) -> tuple:
         """
         Função para organizar e pega os dados ordenadamente de cada card, de acordo com os campos do json de retorno do Pipefy.
@@ -215,7 +212,6 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
         
         
-    
     def get_coluns_id(self) -> tuple:
         """
         Função para organizar e pegar os id dos campos ordenadamente de acordo com o json de retorno do Pipefy.
@@ -252,7 +248,6 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
           
             
-    
     def parse_data_cards(self, response_dados : list) -> list:
         """
         Recebe uma lista de dados da chamada do Pipefy e trata:
@@ -277,7 +272,6 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
     
     
-    @_timeit
     def get_data_phase(self, phase_id : str) -> dict:
         """
         Função que pega todos os cards da phase selecionada fasendo a paginação de acordo com a tag (pageInfo) retornada pelo Pipefy.
@@ -325,7 +319,6 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
         
     
-    
     def update_fields_pipe(self, card_id : str, fields : dict) -> NoReturn:
         """
         Função de atualização de campos do Pipefy - API updateFieldsCard.
@@ -336,13 +329,12 @@ class Pipe(Pipefy):
             
             super().__init__(token=self.TOKEN, host=self.HOST)
             response = self.updateFieldsCard(nodeId=card_id, response_fields=response_fields)
-            self.logger.info(response.text)
+            self.logger.info(f"Response: {response}")
         except Exception as e:
             self.logger.info(e)
             raise PipeExcept(e)
                 
     
-             
     def delete_cards(self, card_id : str) -> dict:
         """
         Função que chama API do Pipefy para deletar cards.
@@ -356,19 +348,16 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
 
 
-    
-    def enable_fields(self, data : dict) -> dict:
+    def change_properties_fields(self, data : str ) -> NoReturn:
+        """
+        Função que chama API do Pipefy que altera as propriedades de um campo.
+        """
+        try:
+            super().__init__(token=self.TOKEN, host=self.HOST)
+            response = self.updatePropertiesFields(fields_attributes=data)
+            self.logger.info(f"Response: {response}.")
+        except Exception as e:
+            self.logger.info(e)
+            raise PipeExcept(e)
         
-        data = list(set([x for n in data for x in n["fields"]]))
-        
-        list_enable = []
-
-        for first_id in self.fields["fields"]:
-            if first_id["id"] in data and first_id["editable"] == True:
-                print(first_id["id"])
-                list_enable.append('{id: "%s", label: "%s", editable: %s}' % (first_id["id"], first_id["nameField"], "false") )
-
-        self.changeEditableFields(response_fields=list_enable)
-        
-        return list_enable
         

@@ -1,6 +1,7 @@
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import date, datetime
 from typing import NoReturn
+
 from libs.utilits_pipe import Pipe
 from datetime import datetime
 
@@ -13,27 +14,36 @@ class Engine(Pipe):
 
 
     def _run_enable_disable_fields(func):
-        def parser_enable_disable(args, kwargs) -> list:
+        def parser_enable_disable(args, kwargs) -> tuple:
             data = list(set([x for n in kwargs["data"] for x in n["fields"]]))
             list_enable = []
             list_disable = []
 
             for first_id in args[0].fields["fields"]:
-                if first_id["id"] in data and first_id["editable"] == True:
-                    print(first_id["id"])
-                    list_enable.append('{id: "%s", label: "%s", editable: %s}' % (first_id["id"], first_id["nameField"], "false") )
-                    list_disable.append('{id: "%s", label: "%s", editable: %s}' % (first_id["id"], first_id["nameField"], "true") )
+                if first_id["id"] in data and first_id["editable"] == False:
+                    list_enable.append('{id: "%s", label: "%s", editable: %s, uuid: "%s"}' % (first_id["id"], first_id["nameField"], "true", first_id["uuid"]) )
+                    list_disable.append('{id: "%s", label: "%s", editable: %s, uuid: "%s"}' % (first_id["id"], first_id["nameField"], "false", first_id["uuid"]) )
             return list_enable, list_disable
         
         def run(*args, **kwargs):
-            lte, ltd = parser_enable_disable(args, kwargs)
-            # args[0].run_all_data_phases()
             start = datetime.now()
             print(f"{func.__name__} iniciado às {start}.")
-            func(*args)
+            
+            lte, ltd = parser_enable_disable(args, kwargs) if kwargs["automatic_editable"] else (None,None)
+            
+            if lte:
+                try:
+                    args[0].change_properties_fields(data=lte)
+                    func(args[0], kwargs["data"])
+                except Exception as e:
+                    raise EngineExcept(e)
+                finally:
+                    args[0].change_properties_fields(data=ltd)
+            else:
+                func(args[0], kwargs["data"])
+            
             end = datetime.now() - start
             print(f"{func.__name__} finalizado às {datetime.now()}.\nTempo de execução (hh:mm:ss.ms) {end}")
-            
         return run
     
     
@@ -71,7 +81,7 @@ class Engine(Pipe):
 
 
     @_run_enable_disable_fields
-    def run_update_fields_cards(self, data : list, automatic_editable : str = None) -> NoReturn:
+    def run_update_fields_cards(self, data : list, automatic_editable : bool = False) -> NoReturn:
         """
         Função "motor" de chamadas paralelizadas, feita para atualizar campos de vários cards ao mesmo tempo, de acordo com os dados passadas.
         
@@ -94,9 +104,9 @@ class Engine(Pipe):
         try:
             if data:
                 with ProcessPoolExecutor() as exe:
-                    for d in data:
-                        card_id = data.get("card_id")
-                        fields = data.get("fields")
+                    for key in data:
+                        card_id = key.get("card_id")
+                        fields = key.get("fields")
                         exe.submit(self.update_fields_pipe, card_id, fields)
                         
         except Exception as e:
