@@ -1,16 +1,28 @@
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import date, datetime
 from typing import NoReturn
+from os import getenv, getcwd
 
+from libs.logger import logger
+from dotenv import load_dotenv
 from libs.utilits_pipe import Pipe
 from datetime import datetime
+
+
+load_dotenv(dotenv_path=fr"{getcwd()}\.env")
+
 
 class EngineExcept(Exception):
     pass
 
 class Engine(Pipe):
-    def __init__(self, token, host, pipe, nonphases, logger):
-        super().__init__(token, host, pipe, nonphases, logger)
+    def __init__(self):
+        self.TOKEN = getenv('TOKEN')
+        self.HOST = getenv('HOST')
+        self.PIPE = getenv('PIPE')
+        self.NONPHASES = getenv('NONPHASES')
+        
+        super().__init__(token=self.TOKEN, host=self.HOST, pipe=self.PIPE, nonphases=self.NONPHASES, logger=logger)
 
 
     def _run_enable_disable_fields(func):

@@ -50,10 +50,10 @@ class Pipe(Pipefy):
         """
         Decorator para cronometrar o tempo de exeção das funções.
         """
-        def print_time(self, *args, **kwargs):
+        def print_time(*args):
             start = datetime.now()
             print(f"{func.__name__} iniciado às {start}.")
-            func(self, *args)
+            func(*args)
             end = datetime.now() - start
             print(f"{func.__name__} finalizado às {datetime.now()}.\nTempo de execução (hh:mm:ss.ms) {end}")
             
