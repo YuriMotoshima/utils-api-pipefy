@@ -50,10 +50,10 @@ class Pipe(Pipefy):
         """
         Decorator para cronometrar o tempo de exeção das funções.
         """
-        def print_time(*args):
+        def print_time(self, *args, **kwargs):
             start = datetime.now()
             print(f"{func.__name__} iniciado às {start}.")
-            func(*args)
+            func(self, *args)
             end = datetime.now() - start
             print(f"{func.__name__} finalizado às {datetime.now()}.\nTempo de execução (hh:mm:ss.ms) {end}")
             
@@ -152,7 +152,7 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
         
         
-    @_timeit
+    
     def parse_phase_history(self, card : dict) -> dict:
         """
         Para cada card é tratado o campo phases_history:
@@ -171,7 +171,7 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
         
         
-    @_timeit
+    
     def get_fields(self, card : dict) -> dict:
         """
         Para cada card é tratado o campo fields:
@@ -191,7 +191,7 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
             
             
-    @_timeit
+    
     def parse_card(self, card : list) -> tuple:
         """
         Função para organizar e pega os dados ordenadamente de cada card, de acordo com os campos do json de retorno do Pipefy.
@@ -215,7 +215,7 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
         
         
-    @_timeit
+    
     def get_coluns_id(self) -> tuple:
         """
         Função para organizar e pegar os id dos campos ordenadamente de acordo com o json de retorno do Pipefy.
@@ -252,7 +252,7 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
           
             
-    @_timeit
+    
     def parse_data_cards(self, response_dados : list) -> list:
         """
         Recebe uma lista de dados da chamada do Pipefy e trata:
@@ -277,7 +277,7 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
     
     
-    @_timeit     
+    @_timeit
     def get_data_phase(self, phase_id : str) -> dict:
         """
         Função que pega todos os cards da phase selecionada fasendo a paginação de acordo com a tag (pageInfo) retornada pelo Pipefy.
@@ -325,7 +325,7 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
         
     
-    @_timeit
+    
     def update_fields_pipe(self, card_id : str, fields : dict) -> NoReturn:
         """
         Função de atualização de campos do Pipefy - API updateFieldsCard.
@@ -342,7 +342,7 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
                 
     
-    @_timeit         
+             
     def delete_cards(self, card_id : str) -> dict:
         """
         Função que chama API do Pipefy para deletar cards.
@@ -356,7 +356,7 @@ class Pipe(Pipefy):
             raise PipeExcept(e)
 
 
-    @_timeit
+    
     def enable_fields(self, data : dict) -> dict:
         
         data = list(set([x for n in data for x in n["fields"]]))
