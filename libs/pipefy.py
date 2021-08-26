@@ -444,25 +444,37 @@ class Pipefy(object):
       else:
         raise PipefyException("Algo deu errado!")
     
-    def allCards(self, pipe_id, after=None, response_fields=None, headers={}):
+    def allCards(self, pipe_id, after=None, filter_date = None, response_fields=None, headers={}):
         """ List cards: Get cards by pipe identifier. """
-
-        response_fields = response_fields or 'pageInfo{endCursor hasNextPage} edges { node { id title assignees { id }' \
-                ' comments { text } comments_count current_phase { name } done due_date ' \
-                'fields { name value } labels { name } phases_history { phase { name } firstTimeIn lastTimeOut } url } }'
+        response_fields = response_fields or 'pageInfo { endCursor hasNextPage } edges { node { id title finished_at updated_at createdBy { id name } assignees { id name email } comments { text } comments_count current_phase { name } done due_date fields { name value datetime_value field { id } array_value  } labels { name } createdAt phases_history { phase { name id } created_at duration firstTimeIn lastTimeOut } url } }'
         if after:
-          query = '{ allCards(pipeId: %(pipe_id)s, after: %(after)s) { %(response_fields)s } }' % {
-            'pipe_id': json.dumps(pipe_id),
-            'after' : json.dumps(after),
-            'response_fields': response_fields,
-        }
-          return self.request(query, headers).get('data', {}).get('allCards', [])
+            if filter_date:
+                query = '{ allCards(pipeId: %(pipe_id)s, after: %(after)s, %(filter_date)s) { %(response_fields)s } }' % {
+                'pipe_id': json.dumps(pipe_id),
+                'after' : json.dumps(after),
+                'filter_date': filter_date,
+                'response_fields': response_fields,
+            }
+            else:
+                query = '{ allCards(pipeId: %(pipe_id)s, after: %(after)s) { %(response_fields)s } }' % {
+                'pipe_id': json.dumps(pipe_id),
+                'after' : json.dumps(after),
+                'response_fields': response_fields,
+            }
+            return self.request(query, headers).get('data', {}).get('allCards', [])
         else:
-          query = '{ allCards(pipeId: %(pipe_id)s) { %(response_fields)s } }' % {
-              'pipe_id': json.dumps(pipe_id),
-              'response_fields': response_fields,
-          }
-          return self.request(query, headers).get('data', {}).get('allCards', [])
+            if filter_date:
+                query = '{ allCards(pipeId: %(pipe_id)s, %(filter_date)s) { %(response_fields)s } }' % {
+                    'pipe_id': json.dumps(pipe_id),
+                    'filter_date': filter_date,
+                    'response_fields': response_fields,
+                }
+            else:
+                query = '{ allCards(pipeId: %(pipe_id)s) { %(response_fields)s } }' % {
+                    'pipe_id': json.dumps(pipe_id),
+                    'response_fields': response_fields,
+                }
+            return self.request(query, headers).get('data', {}).get('allCards', [])
 
     def card(self, id, response_fields=None, headers={}):
         """ Show card: Get a card by its identifier. """
