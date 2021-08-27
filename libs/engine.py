@@ -2,8 +2,8 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import date, datetime
 from typing import NoReturn
 from os import getenv, getcwd
+import logging
 
-from libs.logger import logger
 from dotenv import load_dotenv
 from libs.utilits_pipe import Pipe
 from datetime import datetime
@@ -22,7 +22,7 @@ class Engine(Pipe):
         self.PIPE = getenv('PIPE')
         self.NONPHASES = getenv('NONPHASES')
         
-        super().__init__(token=self.TOKEN, host=self.HOST, pipe=self.PIPE, nonphases=self.NONPHASES, logger=logger)
+        super().__init__(token=self.TOKEN, host=self.HOST, pipe=self.PIPE, nonphases=self.NONPHASES)
 
 
     def _run_enable_disable_fields(func):
@@ -80,7 +80,7 @@ class Engine(Pipe):
                 for phase in self.phases_id:
                     worker = exe.submit(self.get_data_phase, phase)
                     list_future.append(worker)
-                    self.logger.info(f"\nPhase: {phase}, Worker Running: {worker.running()}.")
+                    logging.info(f"\nPhase: {phase}, Worker Running: {worker.running()}.")
                     
                 for worker in as_completed(list_future):
                     if worker.result().get("Status"):
@@ -88,7 +88,7 @@ class Engine(Pipe):
             
             return dados
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise EngineExcept(e)
 
 
@@ -122,7 +122,7 @@ class Engine(Pipe):
                         exe.submit(self.update_fields_pipe, card_id, fields)
                         
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise EngineExcept(e)
     
      
@@ -140,16 +140,16 @@ class Engine(Pipe):
                         print(card[0])
                         worker = exe.submit(self.delete_cards, card[0])
                         list_future.append(worker)
-                        self.logger.info(f"\nCard_ID: {card[0]}, Worker Running: {worker.running()}.")
+                        logging.info(f"\nCard_ID: {card[0]}, Worker Running: {worker.running()}.")
                         
             elif msg == 0:
-                self.logger.info(f"Operação cancelada !")
+                logging.info(f"Operação cancelada !")
                 
             else:
-                self.logger.info(f"Opção incorreta, processo cancelado!")
+                logging.info(f"Opção incorreta, processo cancelado!")
                                   
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise  EngineExcept(e)
 
    
@@ -188,6 +188,6 @@ class Engine(Pipe):
             
             return dados
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise EngineExcept(e)
         

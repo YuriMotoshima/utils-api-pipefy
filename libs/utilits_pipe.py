@@ -1,5 +1,6 @@
 from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor, as_completed
+import logging
 from typing import NoReturn
 from libs.pipefy import Pipefy
 
@@ -9,7 +10,7 @@ class PipeExcept(Exception):
 
 
 class Pipe(Pipefy):
-    def __init__(self, token, host, pipe, nonphases, logger):
+    def __init__(self, token, host, pipe, nonphases):
         """
             `Classe criada para`:
                 - Consumo das API's do Pipefy.
@@ -34,7 +35,6 @@ class Pipe(Pipefy):
                 - `PIPE` : ID do Pipefy que deverá ser efetuado a query, mutation, etc...
                 - `NONPHASE` : Lista com ID das Fases que devem ser ignoradas.
         """
-        self.logger = logger
         self.TOKEN = token
         self.HOST = host
         self.PIPE = pipe
@@ -81,7 +81,7 @@ class Pipe(Pipefy):
             self.phases = {"phases" : [{ "id": d.get("id"), "nameFase": d.get("name"), "informacoes": [ "firstTimeIn", "lastTimeOut"] } for d in campos_pipefy['phases']]}
             
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise PipeExcept(e)
     
     
@@ -107,7 +107,7 @@ class Pipe(Pipefy):
             ]
             return fields
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise PipeExcept(e)
         
 
@@ -123,7 +123,7 @@ class Pipe(Pipefy):
             card_fields = card["fields"]
             return [card_fields.get(n["id"],{}).get("value") for n in self.fields["fields"]]
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise PipeExcept(e)
         
 
@@ -148,7 +148,7 @@ class Pipe(Pipefy):
                     [fields.append(None) for x in informacoes]
             return fields
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise PipeExcept(e)
         
         
@@ -166,7 +166,7 @@ class Pipe(Pipefy):
             card["phases_history"] = history
             return card
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise PipeExcept(e)
         
         
@@ -185,7 +185,7 @@ class Pipe(Pipefy):
             card["fields"] = new_fields
             return card
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise PipeExcept(e)
             
             
@@ -208,7 +208,7 @@ class Pipe(Pipefy):
 
             return tuple(all_fields)
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise PipeExcept(e)
         
         
@@ -244,7 +244,7 @@ class Pipe(Pipefy):
 
             return tuple(all_cols)
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise PipeExcept(e)
           
             
@@ -268,7 +268,7 @@ class Pipe(Pipefy):
             
             return dados_do_cards
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise PipeExcept(e)
     
     
@@ -315,7 +315,7 @@ class Pipe(Pipefy):
                 return {"Status":False,"Data": None}
 
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise PipeExcept(e)
         
     
@@ -329,9 +329,9 @@ class Pipe(Pipefy):
             
             super().__init__(token=self.TOKEN, host=self.HOST)
             response = self.updateFieldsCard(nodeId=card_id, response_fields=response_fields)
-            self.logger.info(f"Response: {response}")
+            logging.info(f"Response: {response}")
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise PipeExcept(e)
                 
     
@@ -342,9 +342,9 @@ class Pipe(Pipefy):
         try:
             super().__init__(token=self.TOKEN, host=self.HOST)
             response = self.deleteCard(id=card_id)
-            self.logger.info(f"Exclusão de Cards - Card_ID: {card_id} - Response: {response}.")
+            logging.info(f"Exclusão de Cards - Card_ID: {card_id} - Response: {response}.")
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise PipeExcept(e)
 
 
@@ -355,9 +355,9 @@ class Pipe(Pipefy):
         try:
             super().__init__(token=self.TOKEN, host=self.HOST)
             response = self.updatePropertiesFields(fields_attributes=data)
-            self.logger.info(f"Response: {response}.")
+            logging.info(f"Response: {response}.")
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise PipeExcept(e)
         
     def get_data_cards_filter(self, pipe_id):
@@ -388,5 +388,5 @@ class Pipe(Pipefy):
             else:
                 return {"Status":False,"Data": None}
         except Exception as e:
-            self.logger.info(e)
+            logging.info(e)
             raise PipeExcept(e)
