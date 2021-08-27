@@ -80,7 +80,7 @@ class Engine(Pipe):
                 for phase in self.phases_id:
                     worker = exe.submit(self.get_data_phase, phase)
                     list_future.append(worker)
-                    logging.info(f"\nPhase: {phase}, Worker Running: {worker.running()}.")
+                    logging.info(f"Phase: {phase}, Worker Running: {worker.running()}.")
                     
                 for worker in as_completed(list_future):
                     if worker.result().get("Status"):

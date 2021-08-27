@@ -1,8 +1,8 @@
 from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor, as_completed
-import logging
 from typing import NoReturn
 from libs.pipefy import Pipefy
+import logging
 
 
 class PipeExcept(Exception):
@@ -69,6 +69,7 @@ class Pipe(Pipefy):
             - Cria lista com id e nome das fases.
             - Cria lista com id e nome dos campos.
         """
+
         try:
             super().__init__(token=self.TOKEN, host=self.HOST)
             
@@ -309,7 +310,8 @@ class Pipe(Pipefy):
                     response_dados = [n["node"] for n in response_edges_phase]
                     
                     dados_cards += self.parse_data_cards(response_dados=response_dados)
-                
+                    
+                logging.info("Passei aqui .....")
                 return {"Status":True,"Data": dados_cards}
             else:
                 return {"Status":False,"Data": None}
