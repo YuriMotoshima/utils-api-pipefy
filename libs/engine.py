@@ -151,3 +151,43 @@ class Engine(Pipe):
         except Exception as e:
             self.logger.info(e)
             raise  EngineExcept(e)
+
+   
+    def run_all_cards_filtered(self, first_date : str , operator : str, conditional : str = None, sec_operator : str = None, second_date : str = None):
+        """
+        Função `motor` de chamada que pegar os cards de acordo com a data de atualiação.
+        
+        Variaveis:
+            - `first_date` e `second_date` : str = "2021-08-26 10:00:00" --> "2021-08-26T10:00:00-03:00"
+            - `operator` e `sec_operator` : str
+                - `equal` = Equals to  
+                - `gt` = Greater than 
+                - `gte` = Greater than or equal to 
+                - `lt` = Less than 
+                - `lte` = Less than or equal to
+            - `conditional` : str = AND / OR
+            
+        Exemplo do filtro que será criado e enviado na chamada: 'filter: {field: "updated_at", operator: gte, value: "2021-08-26T10:00:00-03:00", AND: [{field: "updated_at", operator: lt, value: "2021-08-26T11:00:00-03:00"}]}'
+        
+        Retorna uma lista com contendo tuplas com os dados de cada card de cada fase consultada.
+        
+        `Exemplo:` [('523936', ' - TESTE - !aSA2@#sa...0239988322', 'Validação', None, '2021-08-09T16:07:40-03:00', 'Yuri Roberto Motoshima', [...], None, '2021-08-09T15:37:40-03:00', ...)] 
+        
+        """
+        try:
+            date_format = lambda a : f'{a.split()[0]}T{a.split()[1]}-03:00'
+            
+            if conditional and sec_operator and second_date:
+                conditional_filter = 'filter: {field: "updated_at", operator: %s, value: "%s", %s: [{field: "updated_at", operator: %s, value: "%s"}]}' % (operator, date_format(first_date), conditional, sec_operator, date_format(second_date))
+            else:
+                conditional_filter = 'filter: {field: "updated_at", operator: %s, value: "%s"}' % (operator, date_format(first_date))
+                
+            dados = []
+            
+            dados.extend(self.get_data_cards_filter(pipe_id=self.PIPE, filter_date=conditional_filter).get("Data"))
+            
+            return dados
+        except Exception as e:
+            self.logger.info(e)
+            raise EngineExcept(e)
+        
