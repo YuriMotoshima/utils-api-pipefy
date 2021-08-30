@@ -2,6 +2,7 @@ from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import NoReturn
 from libs.pipefy import Pipefy
+from libs.log import log
 import logging
 
 
@@ -41,6 +42,7 @@ class Pipe(Pipefy):
         self.NONPHASES = nonphases
         self.phase_id = None
         self.fields = None
+        self.log = log()
         self.phases = None
         self.__get_field_and_phases()
         self.columns = self.get_coluns_id()
@@ -69,7 +71,7 @@ class Pipe(Pipefy):
             - Cria lista com id e nome das fases.
             - Cria lista com id e nome dos campos.
         """
-
+        self.log()
         try:
             super().__init__(token=self.TOKEN, host=self.HOST)
             
@@ -81,6 +83,7 @@ class Pipe(Pipefy):
 
             self.phases = {"phases" : [{ "id": d.get("id"), "nameFase": d.get("name"), "informacoes": [ "firstTimeIn", "lastTimeOut"] } for d in campos_pipefy['phases']]}
             
+            logging.info("PASSEI AQUI TAMBÉM ......")
         except Exception as e:
             logging.info(e)
             raise PipeExcept(e)
@@ -282,6 +285,7 @@ class Pipe(Pipefy):
         
         `Exemplo:` {"Status":True,"Data": [(....)(....)]}
         """
+        self.log()
         try:
             response_phase = self.phase(id=phase_id)
             
