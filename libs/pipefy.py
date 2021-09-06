@@ -413,7 +413,7 @@ class Pipefy(object):
     def consultaFields(self, pipe_id, response_fields=None, headers={}):
       """ List fiels: Get fields by pipe identifier. """
       
-      response_fields = response_fields or ' cards_count phases { id name fields { id label editable uuid } } start_form_fields { id label editable uuid } '
+      response_fields = response_fields or ' cards_count phases { id name fields { id label editable uuid required} } start_form_fields { id label editable uuid required } '
       query = '{ pipe(id:%(pipe_id)s) { %(response_fields)s } }' % {
         'pipe_id': json.dumps(pipe_id),
         'response_fields': response_fields
