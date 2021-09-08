@@ -343,10 +343,8 @@ class Pipe(Pipefy):
         """
         try:
             
-            response_fields = ', '.join(['{fieldId: "%s", value: "%s"}' % (key, fields[key]) for key in fields])
-            
             super().__init__(token=self.TOKEN, host=self.HOST)
-            response = self.createCard(pipe_id=self.PIPE, fields_attributes=response_fields)
+            response = self.createCard(pipe_id=self.PIPE, fields_attributes=fields)
             logging.info(f"Response: {response}")
         except Exception as e:
             logging.info(e)

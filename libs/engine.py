@@ -196,7 +196,28 @@ class Engine(Pipe):
     def run_created_all_cards(self, data : list) -> NoReturn:
         """
         Função "motor" de chamadas paralelizadas, feita para criar vários cards ao mesmo tempo, de acordo com os dados passados.
+        
+        Necessário enviar uma lista com todos os campos a serem enviados para cada card, consultar atravez de `Engine().fields` os que são campos `obrigatorio`.
+        
+        Variavel -> lista:
+        [
+            {
+                "field_id": `ID_DO CAMPO_NO_PIPEFY`, "field_value": `VALOR_ACEITO_PELO_CAMPO` 
+            }
 
+        ]
+        
+        Exemplo:
+        [
+                
+            {
+                "field_id": "prioridade", "field_value": "01"
+            },
+            {
+                "field_id": "EMAIL", "field_value": None or Variavel
+            }
+        ]
+        
         """
         try:
             if data:
