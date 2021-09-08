@@ -2,8 +2,10 @@ from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import NoReturn
 from libs.pipefy import Pipefy
+from libs.log import log
 import logging
 
+log().loginit()
 
 class PipeExcept(Exception):
     pass
@@ -69,7 +71,6 @@ class Pipe(Pipefy):
             - Cria lista com id e nome das fases.
             - Cria lista com id e nome dos campos.
         """
-
         try:
             super().__init__(token=self.TOKEN, host=self.HOST)
             
@@ -77,7 +78,7 @@ class Pipe(Pipefy):
             
             self.phases_id = [n.get("id") for n in campos_pipefy["phases"] if not n.get("id") in self.NONPHASES]
             
-            self.fields = {"fields":[{"id": d.get("id"), "nameField":d.get("label"), "editable":d.get("editable"), "uuid":d.get("uuid")} for n in campos_pipefy['phases'] for d in n['fields']] + [{"id": n.get("id"), "nameField": n.get("label"), "editable":n.get("editable"), "uuid":n.get("uuid")} for n in campos_pipefy['start_form_fields']]}
+            self.fields = {"fields":[{"id": d.get("id"), "nameField":d.get("label"), "editable":d.get("editable"), "uuid":d.get("uuid") , "required":d.get("required")} for n in campos_pipefy['phases'] for d in n['fields']] + [{"id": n.get("id"), "nameField": n.get("label"), "editable":n.get("editable"), "uuid":n.get("uuid"), "required":n.get("required")} for n in campos_pipefy['start_form_fields']]}
 
             self.phases = {"phases" : [{ "id": d.get("id"), "nameFase": d.get("name"), "informacoes": [ "firstTimeIn", "lastTimeOut"] } for d in campos_pipefy['phases']]}
             
@@ -311,7 +312,6 @@ class Pipe(Pipefy):
                     
                     dados_cards += self.parse_data_cards(response_dados=response_dados)
                     
-                logging.info("Passei aqui .....")
                 return {"Status":True,"Data": dados_cards}
             else:
                 return {"Status":False,"Data": None}
@@ -335,7 +335,21 @@ class Pipe(Pipefy):
         except Exception as e:
             logging.info(e)
             raise PipeExcept(e)
-                
+    
+    
+    def create_cards_pipe(self, fields : dict) -> NoReturn:
+        """
+        Função de atualização de campos do Pipefy - API updateFieldsCard.
+        """
+        try:
+            
+            super().__init__(token=self.TOKEN, host=self.HOST)
+            response = self.createCard(pipe_id=self.PIPE, fields_attributes=fields)
+            logging.info(f"Response: {response}")
+        except Exception as e:
+            logging.info(e)
+            raise PipeExcept(e)
+          
     
     def delete_cards(self, card_id : str) -> dict:
         """

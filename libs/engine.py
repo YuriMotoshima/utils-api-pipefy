@@ -2,14 +2,15 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import date, datetime
 from typing import NoReturn
 from os import getenv, getcwd
+from libs.log import log
 import logging
 
 from dotenv import load_dotenv
 from libs.utilits_pipe import Pipe
 from datetime import datetime
 
-
 load_dotenv(dotenv_path=fr"{getcwd()}\.env")
+log().loginit()
 
 
 class EngineExcept(Exception):
@@ -190,4 +191,41 @@ class Engine(Pipe):
         except Exception as e:
             logging.info(e)
             raise EngineExcept(e)
+    
+    
+    def run_created_all_cards(self, data : list) -> NoReturn:
+        """
+        Função "motor" de chamadas paralelizadas, feita para criar vários cards ao mesmo tempo, de acordo com os dados passados.
         
+        Necessário enviar uma lista com todos os campos a serem enviados para cada card, consultar atravez de `Engine().fields` os que são campos `obrigatorio`.
+        
+        Variavel -> lista:
+        [
+            {
+                "field_id": `ID_DO CAMPO_NO_PIPEFY`, "field_value": `VALOR_ACEITO_PELO_CAMPO` 
+            }
+
+        ]
+        
+        Exemplo:
+        [
+                
+            {
+                "field_id": "prioridade", "field_value": "01"
+            },
+            {
+                "field_id": "EMAIL", "field_value": None or Variavel
+            }
+        ]
+        
+        """
+        try:
+            if data:
+                with ProcessPoolExecutor() as exe:
+                    for f in data:
+                        fields = data[f]
+                        exe.submit(self.create_cards_pipe, fields)
+                        
+        except Exception as e:
+            logging.info(e)
+            raise EngineExcept(e)
