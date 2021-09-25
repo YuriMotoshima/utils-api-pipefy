@@ -17,11 +17,11 @@ class EngineExcept(Exception):
     pass
 
 class Engine(Pipe):
-    def __init__(self):
-        self.TOKEN = getenv('TOKEN')
-        self.HOST = getenv('HOST')
-        self.PIPE = getenv('PIPE')
-        self.NONPHASES = getenv('NONPHASES')
+    def __init__(self, TOKEN=None, HOST=None, PIPE=None, NONPHASES=None):
+        self.TOKEN = TOKEN or getenv('TOKEN')
+        self.HOST = HOST or getenv('HOST')
+        self.PIPE = PIPE or getenv('PIPE')
+        self.NONPHASES = NONPHASES or getenv('NONPHASES')
         
         super().__init__(token=self.TOKEN, host=self.HOST, pipe=self.PIPE, nonphases=self.NONPHASES)
 

@@ -7,6 +7,7 @@ from urllib3.connectionpool import log as urllib_log
 # from selenium.webdriver.remote.remote_connection import LOGGER as selenium_log
 
 load_dotenv(dotenv_path=fr"{os.getcwd()}\.env")
+
 class log:
     def __init__(self, name_file_log : str = None, dev_env : str = None) -> None:
         self.name_file_log = os.getenv("LOGNAME") if name_file_log == None else name_file_log
