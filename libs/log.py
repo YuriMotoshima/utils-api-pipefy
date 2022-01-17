@@ -19,8 +19,12 @@ class log:
         filename = f'{self.name_file_log} - {datetime.now().strftime("%d-%m-%Y %H")}.log'
         filename = f'[DEV] {filename}' if self.dev_env == 'DEV' else filename
 
+        dirname = f'{os.getcwd()}\\logs'
+        os.makedirs(dirname, exist_ok=True)
+
         dirname = f'{os.getcwd()}\\logs\\{datetime.now().strftime("%d-%m-%Y")}'
         os.makedirs(dirname, exist_ok=True)
+        
         full_filename = os.path.join(dirname, filename)
 
         formatter = '[%(levelname)s]: [%(filename)s line - %(lineno)d] | Date_Time: %(asctime)s | Function: [%(funcName)s] | Message: \n ==> %(message)s'
