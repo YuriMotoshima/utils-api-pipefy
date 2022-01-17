@@ -114,4 +114,4 @@ dmypy.json
 .pyre/
 
 # Logs
-/log/logs
+/logs
