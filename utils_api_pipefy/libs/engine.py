@@ -2,11 +2,11 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import date, datetime
 from typing import NoReturn
 from os import getenv, getcwd
-from libs.log import log
+from utils_api_pipefy.libs.log import log
 import logging
 
 from dotenv import load_dotenv
-from libs.utilits_pipe import Pipe
+from utils_api_pipefy.libs.utilits_pipe import Pipe
 from datetime import datetime
 
 load_dotenv(dotenv_path=fr"{getcwd()}\.env")

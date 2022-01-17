@@ -1,8 +1,8 @@
 from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import NoReturn
-from libs.pipefy import Pipefy
-from libs.log import log
+from utils_api_pipefy.libs.pipefy import Pipefy
+from utils_api_pipefy.libs.log import log
 import logging
 
 log().loginit()
