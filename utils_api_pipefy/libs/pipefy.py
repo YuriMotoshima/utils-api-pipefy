@@ -395,6 +395,14 @@ class Pipefy(object):
         }
         return self.request(query, headers).get('data', {}).get('deleteLabel', {})
 
+    def createComment(self, card_id : str , new_comments : str, headers={}):
+        """ Create comments: Mutation to create a comments of a cards. """
+        
+        query = 'mutation { createComment( input: { card_id: %(card_id)s, text: %(new_comments)s }) { clientMutationId comment{ id }}}' % {
+                'card_id': json.dumps(card_id),
+                'new_comments':json.dumps(new_comments),
+        }
+        return self.request(query, headers).get('data', {}).get('deletePhase', {})
 
     def cards(self, pipe_id, count=10, search={}, response_fields=None, headers={}):
         """ List cards: Get cards by pipe identifier. """
@@ -402,6 +410,7 @@ class Pipefy(object):
         response_fields = response_fields or 'edges { node { id title assignees { id }' \
                 ' comments { text } comments_count current_phase { name } done due_date ' \
                 'fields { name value } labels { name } phases_history { phase { name } firstTimeIn lastTimeOut } url } }'
+                
         query = '{ cards(pipe_id: %(pipe_id)s, first: %(count)s, search: %(search)s) { %(response_fields)s } }' % {
             'pipe_id': json.dumps(pipe_id),
             'count': json.dumps(count),
