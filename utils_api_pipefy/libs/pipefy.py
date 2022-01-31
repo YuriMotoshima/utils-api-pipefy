@@ -547,7 +547,36 @@ class Pipefy(object):
         }
         return self.request(query, headers).get('data', {}).get('updateCard', {}).get('card')
       
+      
+    def createCardPhase(self, pipe_id, fields_attributes, due_date="", parent_ids=[], phase_id=None, response_fields=None, headers={}, label_ids=[]):
+        """ Create card: Mutation to create a card, in case of success a query is returned. """
 
+        response_fields = response_fields or 'card { id title }'
+        query = '''
+            mutation {
+              createCard(
+                input: {
+                  label_ids: %(label_ids)s
+                  due_date: %(due_date)s
+                  pipe_id: %(pipe_id)s
+                  phase_id: %(phase_id)s
+                  fields_attributes: %(fields_attributes)s
+                  parent_ids: [ %(parent_ids)s ]
+                }
+              ) { %(response_fields)s }
+            }
+        ''' % {
+            'label_ids': json.dumps(label_ids),
+            'pipe_id': json.dumps(pipe_id),
+            'phase_id': json.dumps(phase_id),
+            'due_date': json.dumps(due_date),
+            'fields_attributes': self.__prepare_json_dict(fields_attributes),
+            'parent_ids': ', '.join([json.dumps(id) for id in parent_ids]),
+            'response_fields': response_fields,
+        }
+        return self.request(query, headers).get('data', {}).get('createCard', {}).get('card')
+      
+      
     def updateFieldsCard(self, nodeId, fieldId=None, new_value=None, response_fields=None, headers={}):
       """ Update fields card: Mutation to update fields a card, in case of success a query is returned. """
       

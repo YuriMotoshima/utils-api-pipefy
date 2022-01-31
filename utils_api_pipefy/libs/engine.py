@@ -222,9 +222,73 @@ class Engine(Pipe):
         try:
             if data:
                 with ProcessPoolExecutor() as exe:
-                    for f in data:
+                    for f in range(len(data)):
                         fields = data[f]
                         exe.submit(self.create_cards_pipe, fields)
+                        
+        except Exception as e:
+            logging.info(e)
+            raise EngineExcept(e)
+        
+        
+    def run_created_all_cards_phase(self, data : list) -> NoReturn:
+        """
+        Função "motor" de chamadas paralelizadas, feita para criar vários cards ao mesmo tempo, de acordo com os dados passados.
+        
+        Necessário enviar uma lista com todos os campos a serem enviados para cada card, consultar atravez de `Engine().fields` os que são campos `obrigatorio`.
+        
+        Variavel -> lista:
+            [
+                {
+                    "due_date":due_date,
+                    "label_ids":label_ids,
+                    "phase_id": phase_id,
+                    "fields": [
+                        {"field_id": "empresa", "field_value": ""},
+                        {"field_id": "bancos", "field_value": ""},
+                        {"field_id": "data_de_arrecada_o","field_value": ""},
+                        {"field_id": "quantidade_recebida", "field_value": ""},
+                        {"field_id": "quantidade_baixada", "field_value": ""}
+                        {"field_id": "conv_nio", "field_value": None},
+                        {"field_id": "ltimo_nsa", "field_value": None},
+                        {"field_id": "ltimo_arquivo", "field_value": None},
+                        {"field_id": "arquivo", "field_value": None},
+                        {"field_id": "e_mail_destinat_rio", "field_value": None},
+                        {"field_id": "e_mail_c_pia", "field_value":None}
+                    ]
+                }
+            ]
+        
+        Exemplo:
+        
+            cards = [
+                {
+                    "due_date":due_date,
+                    "label_ids":label_ids,
+                    "phase_id": phase_id,
+                    "fields": [
+                        {"field_id": "empresa", "field_value": ""},
+                        {"field_id": "bancos", "field_value": ""},
+                        {"field_id": "data_de_arrecada_o","field_value": ""},
+                        {"field_id": "quantidade_recebida", "field_value": ""},
+                        {"field_id": "quantidade_baixada", "field_value": ""}
+                        {"field_id": "conv_nio", "field_value": None},
+                        {"field_id": "ltimo_nsa", "field_value": None},
+                        {"field_id": "ltimo_arquivo", "field_value": None},
+                        {"field_id": "arquivo", "field_value": None},
+                        {"field_id": "e_mail_destinat_rio", "field_value": None},
+                        {"field_id": "e_mail_c_pia", "field_value":None}
+                    ]
+                }
+            ]
+        
+        """
+        try:
+            if data:
+                with ProcessPoolExecutor() as exe:
+                    for f in range(len(data)):
+                        n_query = data[f]
+                        exe.submit(self.create_cards_pipe_phase, n_query)
                         
         except Exception as e:
             logging.info(e)

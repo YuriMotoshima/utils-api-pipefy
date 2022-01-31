@@ -349,7 +349,20 @@ class Pipe(Pipefy):
         except Exception as e:
             logging.info(e)
             raise PipeExcept(e)
-          
+    
+    
+    def create_cards_pipe_phase(self, fields : dict) -> NoReturn:
+        """
+        Função de atualização de campos do Pipefy - API updateFieldsCard.
+        """
+        try:
+            
+            super().__init__(token=self.TOKEN, host=self.HOST)
+            response = self.createCardPhase( pipe_id=self.PIPE, fields_attributes=fields.get("fields")[0], due_date=fields.get("due_date"), phase_id=fields.get("phase_id"), label_ids=[fields.get("label_ids")] )
+            logging.info(f"Response: {response}")
+        except Exception as e:
+            logging.info(e)
+            raise PipeExcept(e)
     
     def delete_cards(self, card_id : str) -> dict:
         """
