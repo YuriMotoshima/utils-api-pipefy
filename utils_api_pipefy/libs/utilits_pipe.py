@@ -3,13 +3,10 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import NoReturn
 from utils_api_pipefy.libs.pipefy import Pipefy
 from utils_api_pipefy.libs.log import log
+from utils_api_pipefy.libs.excepts import exceptions
 import logging
 
 log().loginit()
-
-class PipeExcept(Exception):
-    pass
-
 
 class Pipe(Pipefy):
     def __init__(self, token, host, pipe, nonphases):
@@ -84,10 +81,10 @@ class Pipe(Pipefy):
             
         except Exception as e:
             logging.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)
     
     
-    def __extract_basics(self, card : dict) -> dict:
+    def __extract_basics(self, card : dict) -> list:
         """
         Para cada card é pego os dados dos campos abaixo.
         
@@ -110,10 +107,10 @@ class Pipe(Pipefy):
             return fields
         except Exception as e:
             logging.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)
         
 
-    def __extract_custom(self, card : dict) -> dict:
+    def __extract_custom(self, card : dict) -> list:
         """
         Para cada card, é pego os dados de acordo com os id passados na lista custom_schema
         
@@ -126,10 +123,10 @@ class Pipe(Pipefy):
             return [card_fields.get(n["id"],{}).get("value") for n in self.fields["fields"]]
         except Exception as e:
             logging.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)
         
 
-    def __extract_phases(self, card : dict) -> dict:
+    def __extract_phases(self, card : dict) -> list:
         """
         Para cada card é pego das inicial e final de cada fase no histórico de fases. (card["phases_history"])
         
@@ -147,11 +144,11 @@ class Pipe(Pipefy):
                     for info in informacoes:
                         fields.append(dados_phase[info])
                 else:
-                    [fields.append(None) for x in informacoes]
+                    [fields.append(None) for _ in informacoes]
             return fields
         except Exception as e:
             logging.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)
         
         
     def parse_phase_history(self, card : dict) -> dict:
@@ -169,7 +166,7 @@ class Pipe(Pipefy):
             return card
         except Exception as e:
             logging.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)
         
         
     def get_fields(self, card : dict) -> dict:
@@ -188,7 +185,7 @@ class Pipe(Pipefy):
             return card
         except Exception as e:
             logging.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)
             
             
     def parse_card(self, card : list) -> tuple:
@@ -211,7 +208,7 @@ class Pipe(Pipefy):
             return tuple(all_fields)
         except Exception as e:
             logging.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)
         
         
     def get_coluns_id(self) -> tuple:
@@ -247,7 +244,7 @@ class Pipe(Pipefy):
             return tuple(all_cols)
         except Exception as e:
             logging.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)
           
             
     def parse_data_cards(self, response_dados : list) -> list:
@@ -271,7 +268,7 @@ class Pipe(Pipefy):
             return dados_do_cards
         except Exception as e:
             logging.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)
     
     
     def get_data_phase(self, phase_id : str) -> dict:
@@ -318,7 +315,7 @@ class Pipe(Pipefy):
 
         except Exception as e:
             logging.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)
         
     
     def update_fields_pipe(self, card_id : str, fields : dict) -> NoReturn:
@@ -334,7 +331,7 @@ class Pipe(Pipefy):
             logging.info(f"Response: {response}")
         except Exception as e:
             logging.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)
     
     
     def create_cards_pipe(self, fields : dict) -> NoReturn:
@@ -348,7 +345,7 @@ class Pipe(Pipefy):
             logging.info(f"Response: {response}")
         except Exception as e:
             logging.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)
     
     
     def create_cards_pipe_phase(self, fields : dict) -> NoReturn:
@@ -362,7 +359,7 @@ class Pipe(Pipefy):
             logging.info(f"Response: {response}")
         except Exception as e:
             logging.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)
     
     def delete_cards(self, card_id : str) -> dict:
         """
@@ -374,7 +371,7 @@ class Pipe(Pipefy):
             logging.info(f"Exclusão de Cards - Card_ID: {card_id} - Response: {response}.")
         except Exception as e:
             logging.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)
 
 
     def change_properties_fields(self, data : str ) -> NoReturn:
@@ -387,7 +384,7 @@ class Pipe(Pipefy):
             logging.info(f"Response: {response}.")
         except Exception as e:
             logging.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)
         
         
     def get_data_cards_filter(self, pipe_id, filter_date : str = None) -> dict:
@@ -436,4 +433,4 @@ class Pipe(Pipefy):
 
         except Exception as e:
             self.logger.info(e)
-            raise PipeExcept(e)
+            raise exceptions(e)

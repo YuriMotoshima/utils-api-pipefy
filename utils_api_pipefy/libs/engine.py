@@ -1,20 +1,17 @@
-from concurrent.futures import ProcessPoolExecutor, as_completed
-from datetime import date, datetime
-from typing import NoReturn
 from os import getenv, getcwd
-from utils_api_pipefy.libs.log import log
 import logging
+from typing import NoReturn
+from datetime import date, datetime
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 from dotenv import load_dotenv
+
+from utils_api_pipefy.libs.log import log
+from utils_api_pipefy.libs.excepts import exceptions
 from utils_api_pipefy.libs.utilits_pipe import Pipe
-from datetime import datetime
 
 load_dotenv(dotenv_path=fr"{getcwd()}\.env")
 log().loginit()
-
-
-class EngineExcept(Exception):
-    pass
 
 class Engine(Pipe):
     def __init__(self, TOKEN=None, HOST=None, PIPE=None, NONPHASES=None):
@@ -49,7 +46,7 @@ class Engine(Pipe):
                     args[0].change_properties_fields(data=lte)
                     func(args[0], kwargs["data"])
                 except Exception as e:
-                    raise EngineExcept(e)
+                    raise exceptions(e)
                 finally:
                     args[0].change_properties_fields(data=ltd)
             else:
@@ -90,7 +87,7 @@ class Engine(Pipe):
             return dados
         except Exception as e:
             logging.info(e)
-            raise EngineExcept(e)
+            raise exceptions(e)
 
 
     @_run_enable_disable_fields
@@ -124,7 +121,7 @@ class Engine(Pipe):
                         
         except Exception as e:
             logging.info(e)
-            raise EngineExcept(e)
+            raise exceptions(e)
     
      
     def run_delete_all_cards(self) -> NoReturn:
@@ -151,7 +148,7 @@ class Engine(Pipe):
                                   
         except Exception as e:
             logging.info(e)
-            raise  EngineExcept(e)
+            raise  exceptions(e)
 
    
     def run_all_cards_filtered(self, first_date : str , operator : str, conditional : str = None, sec_operator : str = None, second_date : str = None):
@@ -190,7 +187,7 @@ class Engine(Pipe):
             return dados
         except Exception as e:
             logging.info(e)
-            raise EngineExcept(e)
+            raise exceptions(e)
     
     
     def run_created_all_cards(self, data : list) -> NoReturn:
@@ -228,7 +225,7 @@ class Engine(Pipe):
                         
         except Exception as e:
             logging.info(e)
-            raise EngineExcept(e)
+            raise exceptions(e)
         
         
     def run_created_all_cards_phase(self, data : list) -> NoReturn:
@@ -292,4 +289,4 @@ class Engine(Pipe):
                         
         except Exception as e:
             logging.info(e)
-            raise EngineExcept(e)
+            raise exceptions(e)

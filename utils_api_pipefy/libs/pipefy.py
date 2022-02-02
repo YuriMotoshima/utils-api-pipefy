@@ -3,11 +3,8 @@ import requests
 import json
 import re
 import urllib3
+from utils_api_pipefy.libs.excepts import exceptions
 urllib3.disable_warnings()
-
-class PipefyException(Exception):
-    pass
-
 
 class Pipefy(object):
     """ Integration class with Pipefy rest api. """
@@ -31,13 +28,13 @@ class Pipefy(object):
         try:
             response = json.loads(response.text)
         except ValueError:
-            raise PipefyException(response.text)
+            raise exceptions(response.text)
 
         if response.get('error'):
-            raise PipefyException(response.get('error_description', response.get('error')))
+            raise exceptions(response.get('error_description', response.get('error')))
         if response.get('errors'):
             for error in response.get('errors'):
-                raise PipefyException(error.get('message'))
+                raise exceptions(error.get('message'))
         return response
 
 
@@ -451,7 +448,7 @@ class Pipefy(object):
         }
         return self.request(query, headers, schema="mutation").get('data', {})
       else:
-        raise PipefyException("Algo deu errado!")
+        raise exceptions("Algo deu errado!")
     
     def allCards(self, pipe_id, after=None, filter_date = None, response_fields=None, headers={}):
         """ List cards: Get cards by pipe identifier. """
