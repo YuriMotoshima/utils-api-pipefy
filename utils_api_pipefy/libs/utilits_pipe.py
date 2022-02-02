@@ -355,11 +355,12 @@ class Pipe(Pipefy):
         try:
             
             super().__init__(token=self.TOKEN, host=self.HOST)
-            response = self.createCardPhase( pipe_id=self.PIPE, fields_attributes=fields.get("fields")[0], due_date=fields.get("due_date"), phase_id=fields.get("phase_id"), label_ids=[fields.get("label_ids")] )
+            response = self.createCardPhase( pipe_id=self.PIPE, fields_attributes=fields.get("fields"), due_date=fields.get("due_date"), phase_id=fields.get("phase_id"), label_ids=[fields.get("label_ids")] )
             logging.info(f"Response: {response}")
         except Exception as e:
             logging.info(e)
             raise exceptions(e)
+    
     
     def delete_cards(self, card_id : str) -> dict:
         """
@@ -429,7 +430,7 @@ class Pipe(Pipefy):
                 
                 return {"Status":True,"Data": dados_cards}
             else:
-                return {"Status":False,"Data": "None"}
+                return {"Status":False,"Data": ""}
 
         except Exception as e:
             self.logger.info(e)
