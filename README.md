@@ -1,2 +1,12 @@
 # utils-api-pipefy
  Utilidades Pipefy
+
+####env
+>>>HOST=your_host
+>>>PIPE=your_number_pipefy
+>>>NONPHASES=your_number_ignorate_phases
+>>>TOKEN=your_token
+>>>
+>>>LOGNAME = your_name_project
+>>>LOGENV = PROD_or_DEV
+>>>DISABLELOG = True_or_False
