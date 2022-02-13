@@ -12,9 +12,9 @@ if __name__ == "__main__":
     # ALGUMAS DAS UTILIDADES DO ENGINE
     logging.info(eng.columns)
     print(eng.phase_id)
-    # print(eng.fields)
-    # print(eng.phases)
+    print(eng.fields)
+    print(eng.phases)
     
-    # df = pd.DataFrame(data=eng.run_all_data_phases(), columns=eng.columns)
+    df = pd.DataFrame(data=eng.run_all_data_phases(), columns=eng.columns)
     
     print("")

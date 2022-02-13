@@ -2,7 +2,7 @@
  Utilidades Pipefy
 
 ####env
->>>HOST=your_host
+>>>HOST_PIPE=your_host
 >>>PIPE=your_number_pipefy
 >>>NONPHASES=your_number_ignorate_phases
 >>>TOKEN=your_token

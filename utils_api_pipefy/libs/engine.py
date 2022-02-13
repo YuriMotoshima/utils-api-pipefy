@@ -16,7 +16,7 @@ log().loginit()
 class Engine(Pipe):
     def __init__(self, TOKEN=None, HOST=None, PIPE=None, NONPHASES=None):
         self.TOKEN = TOKEN or environ.get('TOKEN')
-        self.HOST = HOST or environ.get('HOST')
+        self.HOST = HOST or environ.get('HOST_PIPE')
         self.PIPE = PIPE or environ.get('PIPE')
         self.NONPHASES = NONPHASES or environ.get('NONPHASES')
         

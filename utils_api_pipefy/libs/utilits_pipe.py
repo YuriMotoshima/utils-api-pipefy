@@ -30,7 +30,7 @@ class Pipe(Pipefy):
                     
             `Variaveis aguardadas`:
                 - `TOKEN` : Bearer do Pipefy necessária para autorizar as chamadas da API.
-                - `HOST` : localhost necessário para determinar para onde será enviado a chamada da API, por padrão Pipefy é utlizado app.
+                - `HOST_PIPE` : localhost necessário para determinar para onde será enviado a chamada da API, por padrão Pipefy é utlizado app.
                 - `PIPE` : ID do Pipefy que deverá ser efetuado a query, mutation, etc...
                 - `NONPHASE` : Lista com ID das Fases que devem ser ignoradas.
         """
