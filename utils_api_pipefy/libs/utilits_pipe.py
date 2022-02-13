@@ -73,7 +73,10 @@ class Pipe(Pipefy):
             
             campos_pipefy = self.consultaFields(pipe_id=self.PIPE)
             
-            self.phases_id = [n.get("id") for n in campos_pipefy["phases"] if not n.get("id") in self.NONPHASES]
+            if self.NONPHASES:
+                self.phases_id = [n.get("id") for n in campos_pipefy["phases"] if not n.get("id") in self.NONPHASES]
+            else:
+                self.phases_id = [n.get("id") for n in campos_pipefy["phases"]]
             
             self.fields = {"fields":[{"id": d.get("id"), "nameField":d.get("label"), "editable":d.get("editable"), "uuid":d.get("uuid") , "required":d.get("required")} for n in campos_pipefy['phases'] for d in n['fields']] + [{"id": n.get("id"), "nameField": n.get("label"), "editable":n.get("editable"), "uuid":n.get("uuid"), "required":n.get("required")} for n in campos_pipefy['start_form_fields']]}
 

@@ -5,7 +5,7 @@ import logging
 from dotenv import load_dotenv
 from utils_api_pipefy.libs.log import log
 
-load_dotenv(dotenv_path=fr"{getcwd()}\.env")
+load_dotenv(dotenv_path=f"{getcwd()}/.env")
 log().loginit()
 
 

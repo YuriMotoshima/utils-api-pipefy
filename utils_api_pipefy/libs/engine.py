@@ -1,7 +1,7 @@
-from os import getenv, getcwd
+from os import environ, getcwd
 import logging
 from typing import NoReturn
-from datetime import date, datetime
+from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 from dotenv import load_dotenv
@@ -10,15 +10,15 @@ from utils_api_pipefy.libs.log import log
 from utils_api_pipefy.libs.excepts import exceptions
 from utils_api_pipefy.libs.utilits_pipe import Pipe
 
-load_dotenv(dotenv_path=fr"{getcwd()}\.env")
+load_dotenv(dotenv_path=f"{getcwd()}/.env")
 log().loginit()
 
 class Engine(Pipe):
     def __init__(self, TOKEN=None, HOST=None, PIPE=None, NONPHASES=None):
-        self.TOKEN = TOKEN or getenv('TOKEN')
-        self.HOST = HOST or getenv('HOST')
-        self.PIPE = PIPE or getenv('PIPE')
-        self.NONPHASES = NONPHASES or getenv('NONPHASES')
+        self.TOKEN = TOKEN or environ.get('TOKEN')
+        self.HOST = HOST or environ.get('HOST')
+        self.PIPE = PIPE or environ.get('PIPE')
+        self.NONPHASES = NONPHASES or environ.get('NONPHASES')
         
         super().__init__(token=self.TOKEN, host=self.HOST, pipe=self.PIPE, nonphases=self.NONPHASES)
 

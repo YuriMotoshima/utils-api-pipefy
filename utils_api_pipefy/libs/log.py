@@ -10,9 +10,9 @@ load_dotenv(dotenv_path=fr"{os.getcwd()}\.env")
 
 class log:
     def __init__(self, name_file_log : str = None, dev_env : str = None, disable_log : str = None) -> None:
-        self.name_file_log = os.getenv("LOGNAME") if name_file_log == None else name_file_log                                                                           # ¥
-        self.dev_env = os.getenv("LOGENV") if dev_env == None else dev_env
-        self.disable_log = os.getenv("DISABLELOG")  if disable_log == None else dev_env
+        self.name_file_log = os.environ.get("LOGNAME") if name_file_log == None else name_file_log                                                                           # ¥
+        self.dev_env = os.environ.get("LOGENV") if dev_env == None else dev_env
+        self.disable_log = os.environ.get("DISABLELOG")  if disable_log == None else dev_env
             
             
     def loginit(self):
