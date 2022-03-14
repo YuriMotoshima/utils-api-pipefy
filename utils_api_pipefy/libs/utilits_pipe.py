@@ -1,6 +1,3 @@
-from datetime import datetime
-from concurrent.futures import ProcessPoolExecutor, as_completed
-from typing import NoReturn
 from utils_api_pipefy.libs.pipefy import Pipefy
 from utils_api_pipefy.libs.log import log
 from utils_api_pipefy.libs.excepts import exceptions
@@ -23,7 +20,6 @@ class Pipe(Pipefy):
                 - Nativas:
                     - from os import getenv
                     - from concurrent.futures import ProcessPoolExecutor, as_completed
-                    - from typing import NoReturn
                 - Externas:
                     - from dotenv import load_dotenv (Pode ser substituida de acordo com o Usuário)
                     - from api_pipefy.pipefy import Pipefy (Pode alterar de acordo com o Usuário)
@@ -44,26 +40,12 @@ class Pipe(Pipefy):
         self.__get_field_and_phases()
         self.columns = self.get_coluns_id()
     
-    
-    def _timeit(func):
-        """
-        Decorator para cronometrar o tempo de exeção das funções.
-        """
-        def print_time(*args):
-            start = datetime.now()
-            print(f"{func.__name__} iniciado às {start}.")
-            func(*args)
-            end = datetime.now() - start
-            print(f"{func.__name__} finalizado às {datetime.now()}.\nTempo de execução (hh:mm:ss.ms) {end}")
-            
-        return print_time
        
-        
-    def __get_field_and_phases(self) -> NoReturn:
+    def __get_field_and_phases(self) -> None:
         """
         Função para pegar as fases, campos e id das fases do Pipefy
         
-        Chama a API consultaFields e trata o retorno:
+        Chama a API consulta_fields e trata o retorno:
             - Cria lista com id das fases.
             - Cria lista com id e nome das fases.
             - Cria lista com id e nome dos campos.
@@ -71,7 +53,7 @@ class Pipe(Pipefy):
         try:
             super().__init__(token=self.TOKEN, host=self.HOST)
             
-            campos_pipefy = self.consultaFields(pipe_id=self.PIPE)
+            campos_pipefy = self.consulta_fields(pipe_id=self.PIPE)
             
             if self.NONPHASES:
                 self.phases_id = [n.get("id") for n in campos_pipefy["phases"] if not n.get("id") in self.NONPHASES]
@@ -321,44 +303,44 @@ class Pipe(Pipefy):
             raise exceptions(e)
         
     
-    def update_fields_pipe(self, card_id : str, fields : dict) -> NoReturn:
+    def update_fields_pipe(self, card_id : str, fields : dict) -> None:
         """
-        Função de atualização de campos do Pipefy - API updateFieldsCard.
+        Função de atualização de campos do Pipefy - API update_fields_card.
         """
         try:
             
             response_fields = ', '.join(['{fieldId: "%s", value: "%s"}' % (key, fields[key]) for key in fields])
             
             super().__init__(token=self.TOKEN, host=self.HOST)
-            response = self.updateFieldsCard(nodeId=card_id, response_fields=response_fields)
+            response = self.update_fields_card(nodeId=card_id, response_fields=response_fields)
             logging.info(f"Response: {response}")
         except Exception as e:
             logging.info(e)
             raise exceptions(e)
     
     
-    def create_cards_pipe(self, fields : dict) -> NoReturn:
+    def create_cards_pipe(self, fields : dict) -> None:
         """
-        Função de atualização de campos do Pipefy - API updateFieldsCard.
+        Função de atualização de campos do Pipefy - API create_card.
         """
         try:
             
             super().__init__(token=self.TOKEN, host=self.HOST)
-            response = self.createCard(pipe_id=self.PIPE, fields_attributes=fields)
+            response = self.create_card(pipe_id=self.PIPE, fields_attributes=fields)
             logging.info(f"Response: {response}")
         except Exception as e:
             logging.info(e)
             raise exceptions(e)
     
     
-    def create_cards_pipe_phase(self, fields : dict) -> NoReturn:
+    def create_cards_pipe_phase(self, fields : dict) -> None:
         """
-        Função de atualização de campos do Pipefy - API updateFieldsCard.
+        Função de atualização de campos do Pipefy - API update_fields_card.
         """
         try:
             
             super().__init__(token=self.TOKEN, host=self.HOST)
-            response = self.createCardPhase( pipe_id=self.PIPE, fields_attributes=fields.get("fields"), due_date=fields.get("due_date"), phase_id=fields.get("phase_id"), label_ids=[fields.get("label_ids")] )
+            response = self.create_card_phase( pipe_id=self.PIPE, fields_attributes=fields.get("fields"), due_date=fields.get("due_date"), phase_id=fields.get("phase_id"), label_ids=[fields.get("label_ids")] )
             logging.info(f"Response: {response}")
         except Exception as e:
             logging.info(e)
@@ -371,20 +353,20 @@ class Pipe(Pipefy):
         """
         try:
             super().__init__(token=self.TOKEN, host=self.HOST)
-            response = self.deleteCard(id=card_id)
+            response = self.delete_card(id=card_id)
             logging.info(f"Exclusão de Cards - Card_ID: {card_id} - Response: {response}.")
         except Exception as e:
             logging.info(e)
             raise exceptions(e)
 
 
-    def change_properties_fields(self, data : str ) -> NoReturn:
+    def change_properties_fields(self, data : str ) -> None:
         """
         Função que chama API do Pipefy que altera as propriedades de um campo.
         """
         try:
             super().__init__(token=self.TOKEN, host=self.HOST)
-            response = self.updatePropertiesFields(fields_attributes=data)
+            response = self.update_properties_fields(fields_attributes=data)
             logging.info(f"Response: {response}.")
         except Exception as e:
             logging.info(e)
@@ -403,7 +385,7 @@ class Pipe(Pipefy):
         filter_date = filter_date or None
         
         try:
-            response_phase = self.allCards(pipe_id=pipe_id, filter_date=filter_date)
+            response_phase = self.all_cards(pipe_id=pipe_id, filter_date=filter_date)
             
             next_page_phase = response_phase['pageInfo']['hasNextPage']
             
@@ -421,7 +403,7 @@ class Pipe(Pipefy):
                     
                     after = response_phase['pageInfo']['endCursor'] if response_phase['pageInfo']['hasNextPage'] else None
                     
-                    response_phase = self.allCards(pipe_id=pipe_id, after=after, filter_date=filter_date)
+                    response_phase = self.all_cards(pipe_id=pipe_id, after=after, filter_date=filter_date)
                     
                     next_page_phase = response_phase['pageInfo']['hasNextPage']
             

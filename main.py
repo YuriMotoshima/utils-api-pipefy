@@ -1,20 +1,25 @@
-from os import environ
-import pandas as pd
+import os
 import logging
-from utils_api_pipefy.libs.log import log
+from dotenv import load_dotenv
 from utils_api_pipefy.libs.engine import Engine
+from utils_api_pipefy.libs.excepts import exceptions
+from utils_api_pipefy.libs.log import log
+
+load_dotenv(dotenv_path=fr"{os.getcwd()}\.env")
+log().loginit()
 
 if __name__ == "__main__":
     
-    log().loginit()
+    try:
+        eng = Engine()
+        
+        # ALGUMAS DAS UTILIDADES DO ENGINE
+        logging.info(eng.columns)
+        print(eng.phase_id)
+        print(eng.fields)
+        print(eng.phases)
+        
+        data=eng.run_all_data_phases()
     
-    eng = Engine()
-    # ALGUMAS DAS UTILIDADES DO ENGINE
-    logging.info(eng.columns)
-    print(eng.phase_id)
-    print(eng.fields)
-    print(eng.phases)
-    
-    df = pd.DataFrame(data=eng.run_all_data_phases(), columns=eng.columns)
-    
-    print("")
+    except Exception as err:
+        raise exceptions(err)
