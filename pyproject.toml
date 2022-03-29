@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "utils-api-pipefy"
-version = "0.2.0"
+version = "0.2.1"
 description = "Ferramentas de para otimizar o consumo de api do pipefy, trantando os retornos e criando concurrence futures para multi-processamentos."
 authors = ["Yuri Motoshima <yurimotoshima@gmail.com>"]
 license = "MIT"

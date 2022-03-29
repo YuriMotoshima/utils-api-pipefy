@@ -1,7 +1,7 @@
+import logging
 from utils_api_pipefy.libs.pipefy import Pipefy
 from utils_api_pipefy.libs.log import log
 from utils_api_pipefy.libs.excepts import exceptions
-import logging
 
 log().loginit()
 
@@ -34,7 +34,7 @@ class Pipe(Pipefy):
         self.HOST = host
         self.PIPE = pipe
         self.NONPHASES = nonphases
-        self.phase_id = None
+        self.phases_id = None
         self.fields = None
         self.phases = None
         self.__get_field_and_phases()
@@ -56,7 +56,7 @@ class Pipe(Pipefy):
             campos_pipefy = self.consulta_fields(pipe_id=self.PIPE)
             
             if self.NONPHASES:
-                self.phases_id = [n.get("id") for n in campos_pipefy["phases"] if not n.get("id") in self.NONPHASES]
+                self.phases_id = [n.get("id") for n in campos_pipefy["phases"] if not n.get("id") in eval(self.NONPHASES)]
             else:
                 self.phases_id = [n.get("id") for n in campos_pipefy["phases"]]
             
@@ -312,7 +312,7 @@ class Pipe(Pipefy):
             response_fields = ', '.join(['{fieldId: "%s", value: "%s"}' % (key, fields[key]) for key in fields])
             
             super().__init__(token=self.TOKEN, host=self.HOST)
-            response = self.update_fields_card(nodeId=card_id, response_fields=response_fields)
+            response = self.update_fields_card(node_id=card_id, response_fields=response_fields)
             logging.info(f"Response: {response}")
         except Exception as e:
             logging.info(e)

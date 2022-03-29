@@ -20,4 +20,4 @@ class exceptions(Exception):
     def traceback_cause(self):
         exc = traceback.TracebackException(*self.exc_info)
         expected_stack = traceback.StackSummary.extract(traceback.walk_tb(self.exc_info[2]))
-        logging.info(f"1 - {exc}\n2 - {expected_stack[0]}\n")
+        logging.error(f"1 - {exc}\n2 - {expected_stack[0]}\n")

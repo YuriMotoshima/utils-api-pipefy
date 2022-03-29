@@ -1,4 +1,5 @@
 import os
+import json
 import logging
 from dotenv import load_dotenv
 from utils_api_pipefy.libs.engine import Engine
@@ -15,9 +16,9 @@ if __name__ == "__main__":
         
         # ALGUMAS DAS UTILIDADES DO ENGINE
         logging.info(eng.columns)
-        print(eng.phase_id)
-        print(eng.fields)
-        print(eng.phases)
+        print(json.dumps(eng.phases_id, ensure_ascii=False, indent=2))
+        print(json.dumps(eng.fields, ensure_ascii=False, indent=2))
+        print(json.dumps(eng.phases, ensure_ascii=False, indent=2))
         
         data=eng.run_all_data_phases()
     
