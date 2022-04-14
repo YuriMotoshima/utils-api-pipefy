@@ -83,7 +83,7 @@ class Pipe(Pipefy):
                     card.get("current_phase").get("name"),
                     card.get("labels")[0]["name"] if card.get("labels") else None,
                     card.get("due_date"),
-                    card.get("createdBy").get("name"),
+                    card.get("createdBy").get("name") if card.get("createdBy") != None else None,
                     card.get("assignees"),
                     card.get("finished_at"),
                     card.get("createdAt"),
