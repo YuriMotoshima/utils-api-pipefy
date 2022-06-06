@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 import json
+import time
 import re
 import urllib3
 from utils_api_pipefy.libs.excepts import exceptions
@@ -16,26 +17,38 @@ class Pipefy(object):
 
 
     def request(self, query, headers={}, schema : str = "query"):
-        _headers = self.headers
-        _headers.update(headers)
+      
+      def get_request(headers:dict, query:str):
         session_request = requests.Session()
-        response = session_request.post(
-            self.endpoint,
-            json={ schema : query },
-            headers=_headers, 
-            verify=False
-        )
-        try:
-            response = json.loads(response.text)
-        except ValueError:
-            raise exceptions(response.text)
+        resp = session_request.post( self.endpoint, json={ schema : query }, headers=headers, verify=False)
+        return resp
+      
+      _headers = self.headers
+      _headers.update(headers)
+      
+      response = get_request(headers=_headers, query=query)
+      count_try = 0
+      status_code = int(response.status_code)
+      
+      while count_try < 4 and status_code > 399:
+        time.sleep(40)
+        response = get_request(headers=_headers, query=query)
+        count_try = count_try + 1
+        status_code = int(response.status_code)
+        print(count_try)
+        
+      try:
+          response = json.loads(response.text)
+      except ValueError:
+          raise exceptions(response.text)
 
-        if response.get('error'):
-            raise exceptions(response.get('error_description', response.get('error')))
-        if response.get('errors'):
-            for error in response.get('errors'):
-                raise exceptions(error.get('message'))
-        return response
+      if response.get('error'):
+          raise exceptions(response.get('error_description', response.get('error')))
+        
+      if response.get('errors'):
+          for error in response.get('errors'):
+              raise exceptions(error.get('message'))
+      return response
 
 
     def __prepare_json_dict(self, data_dict):
@@ -208,7 +221,7 @@ class Pipefy(object):
         try:
           if after:
             response_fields = response_fields or 'pageInfo { endCursor hasNextPage } edges { node { id title finished_at updated_at createdBy { id name } assignees { id name email } comments { text } comments_count current_phase { name } done due_date fields { name value datetime_value field { id } array_value  } labels { name } createdAt phases_history { phase { name id } created_at duration firstTimeIn lastTimeOut } url } }'
-            query = '{ phase(id: %(id)s){ cards(after:%(after)s) {%(response_fields)s } } }' % {
+            query = '{ phase(id: %(id)s){ cards_count cards(after:%(after)s) {%(response_fields)s } } }' % {
                 'id': json.dumps(id),
                 'after':json.dumps(after),
                 'response_fields': response_fields,
@@ -216,7 +229,7 @@ class Pipefy(object):
             return self.request(query, headers).get('data', {}).get('phase')
           else:
             response_fields = response_fields or 'cards { pageInfo { endCursor hasNextPage } edges { node { id title finished_at updated_at createdBy { id name } assignees { id name email } comments { text } comments_count current_phase { name } done due_date fields { name value datetime_value field { id } array_value } labels { name } createdAt phases_history { phase { name id } created_at duration firstTimeIn lastTimeOut } url } } }'
-            query = '{ phase(id: %(id)s) { %(response_fields)s} }' % {
+            query = '{ phase(id: %(id)s) { cards_count  %(response_fields)s} }' % {
                 'id': json.dumps(id),
                 'response_fields': response_fields,
             }
