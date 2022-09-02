@@ -32,7 +32,7 @@ class log:
 
             formatter = '[%(levelname)s]: [%(filename)s line - %(lineno)d] | Date_Time: %(asctime)s | Function: [%(funcName)s] | Message: ➪ %(message)s'
 
-            file_handler = logging.FileHandler(filename=full_filename)
+            file_handler = logging.FileHandler(filename=full_filename, encoding='utf-8')
             stdout_handler = logging.StreamHandler(sys.stdout)
             handlers = [file_handler, stdout_handler]
 

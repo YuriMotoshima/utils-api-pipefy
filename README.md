@@ -11,7 +11,7 @@ pip install utils-api-pipefy
 ```
 
 ## .env
-HOST=app or seu_host_pipefy<br>
+HOST_PIPE=app or seu_host_pipefy<br>
 PIPE= seu_numero_pipe<br>
 NONPHASES= [numeros_fases_ignoradas]<br>
 TOKEN= seu_token<br>
@@ -39,7 +39,7 @@ if __name__ == "__main__":
         
         # ALGUMAS DAS UTILIDADES DO ENGINE
         logging.info(eng.columns)
-        print(eng.phase_id)
+        print(eng.phases_id)
         print(eng.fields)
         print(eng.phases)
         

@@ -54,17 +54,20 @@ class Pipe(Pipefy):
         try:
             super().__init__(token=self.TOKEN, host=self.HOST)
             
-            campos_pipefy = self.consulta_fields(pipe_id=self.PIPE)
-            
-            if self.NONPHASES:
-                self.phases_id = [n.get("id") for n in campos_pipefy["phases"] if not n.get("id") in eval(self.NONPHASES)]
-            else:
-                self.phases_id = [n.get("id") for n in campos_pipefy["phases"]]
-            
-            self.fields = {"fields":[{"id": d.get("id"), "nameField":d.get("label"), "editable":d.get("editable"), "uuid":d.get("uuid") , "required":d.get("required")} for n in campos_pipefy['phases'] for d in n['fields']] + [{"id": n.get("id"), "nameField": n.get("label"), "editable":n.get("editable"), "uuid":n.get("uuid"), "required":n.get("required")} for n in campos_pipefy['start_form_fields']]}
+            if self.PIPE:
+                campos_pipefy = self.consulta_fields(pipe_id=self.PIPE)
+                
+                if self.NONPHASES:
+                    self.phases_id = [n.get("id") for n in campos_pipefy["phases"] if not n.get("id") in eval(self.NONPHASES)]
+                else:
+                    self.phases_id = [n.get("id") for n in campos_pipefy["phases"]]
+                
+                self.fields = {"fields":[{"id": d.get("id"), "nameField":d.get("label"), "editable":d.get("editable"), "uuid":d.get("uuid") , "required":d.get("required")} for n in campos_pipefy['phases'] for d in n['fields']] + [{"id": n.get("id"), "nameField": n.get("label"), "editable":n.get("editable"), "uuid":n.get("uuid"), "required":n.get("required")} for n in campos_pipefy['start_form_fields']]}
 
-            self.phases = {"phases" : [{ "id": d.get("id"), "nameFase": d.get("name"), "informacoes": [ "firstTimeIn", "lastTimeOut"] } for d in campos_pipefy['phases']]}
-            
+                self.phases = {"phases" : [{ "id": d.get("id"), "nameFase": d.get("name"), "informacoes": [ "firstTimeIn", "lastTimeOut"] } for d in campos_pipefy['phases']]}
+            else:
+                logging.info(f"Por falta de informação do PIPE, não foi gerado as variávels : [self.phases_id, self.fields, self.phases]")
+                
         except Exception as e:
             logging.info(e)
             raise exceptions(e)
@@ -206,28 +209,32 @@ class Pipe(Pipefy):
         `Exemplo:` ('id', 'title', 'current_phase', 'labels', 'due_date', 'createdBy', 'assignees', 'finished_at', 'createdAt', 'updated_at', 'sla', 'dados_ok', 'mensagem_de_duplicidade', 'os_procedente_1', ...)
         """
         try:
-            basic_cols = ["id","title","current_phase","labels","due_date","createdBy","assignees","finished_at","createdAt","updated_at"]
-            
-            custom_cols = [col["id"] for col in self.fields["fields"] ]
-            phases_cols = []
-            for phase in self.phases["phases"]:
-                phase_name = phase["id"]
+            if self.phases:
+                basic_cols = ["id","title","current_phase","labels","due_date","createdBy","assignees","finished_at","createdAt","updated_at"]
+                
+                custom_cols = [col["id"] for col in self.fields["fields"] ]
+                phases_cols = []
+                for phase in self.phases["phases"]:
+                    phase_name = phase["id"]
 
-                # cadastra nome para cada coluna informada
-                for info in phase["informacoes"]:
-                    if info == "firstTimeIn":
-                        col_name = "fti_" + phase_name
-                    elif info == "lastTimeOut":
-                        col_name = "lto_" + phase_name
-                    elif info == "created_at":
-                        col_name = "created_at_" + phase_name
-                    elif info == "duration":
-                        col_name = "total_time_in_" + phase_name
-                    phases_cols.append(col_name)
-                    
-            all_cols = basic_cols + custom_cols + phases_cols
+                    # cadastra nome para cada coluna informada
+                    for info in phase["informacoes"]:
+                        if info == "firstTimeIn":
+                            col_name = "fti_" + phase_name
+                        elif info == "lastTimeOut":
+                            col_name = "lto_" + phase_name
+                        elif info == "created_at":
+                            col_name = "created_at_" + phase_name
+                        elif info == "duration":
+                            col_name = "total_time_in_" + phase_name
+                        phases_cols.append(col_name)
+                        
+                all_cols = basic_cols + custom_cols + phases_cols
 
-            return tuple(all_cols)
+                return tuple(all_cols)
+            else:
+                logging.info(f"Por falta de informação do PIPE, não foi gerado as variávels : [self.columns]")
+                return tuple(["Por falta de informação do PIPE, não foi gerado as variávels : [self.columns]"])
         except Exception as e:
             logging.info(e)
             raise exceptions(e)
