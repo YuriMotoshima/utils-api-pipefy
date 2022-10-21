@@ -23,6 +23,8 @@ DISABLELOG = True or False [False disabilita a criação de pasta e arquivo de l
 
 ```py
 import os
+import json
+import time
 import logging
 from dotenv import load_dotenv
 from utils_api_pipefy.libs.engine import Engine
@@ -39,12 +41,14 @@ if __name__ == "__main__":
         
         # ALGUMAS DAS UTILIDADES DO ENGINE
         logging.info(eng.columns)
-        print(eng.phases_id)
-        print(eng.fields)
-        print(eng.phases)
+        print(json.dumps(eng.phases_id, ensure_ascii=False, indent=2))
+        print(json.dumps(eng.fields, ensure_ascii=False, indent=2))
+        print(json.dumps(eng.phases, ensure_ascii=False, indent=2))
         
+        a = time.time()
         data=eng.run_all_data_phases()
-    
+        print(f"\n\nTempo total: {time.time()-a}\n\n")
+        print()
     except Exception as err:
         raise exceptions(err)
 

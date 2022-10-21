@@ -35,7 +35,7 @@ class Pipefy(object):
         response = get_request(headers=_headers, query=query)
         count_try = count_try + 1
         status_code = int(response.status_code)
-        print(count_try)
+        print(f"{count_try} connection attempt made. Status Code: {status_code}")
         
       try:
           response = json.loads(response.text)
@@ -606,24 +606,27 @@ class Pipefy(object):
         """ Update card: Mutation to update a card, in case of success a query is returned. """
         try:
           response_fields = response_fields or 'card { id title }'
+          str_due_date = due_date.strftime('%Y-%m-%dT%H:%M:%S+00:00') if due_date else json.dumps(due_date)
+          str_assignees = ', '.join([json.dumps(id) for id in assignee_ids])
+          str_label_ids = ', '.join([json.dumps(id) for id in label_ids])
           query = '''
               mutation {
-                updateCard(
+              updateCard(
                   input: {
-                    id: %(id)s
-                    title: %(title)s
-                    due_date: %(due_date)s
-                    assignee_ids: [ %(assignee_ids)s ]
-                    label_ids: [ %(label_ids)s ]
+                  %(id)s
+                  %(title)s
+                  %(due_date)s
+                  %(assignee_ids)s
+                  %(label_ids)s
                   }
-                ) { %(response_fields)s }
+              ) { %(response_fields)s }
               }
           ''' % {
-              'id': json.dumps(id),
-              'title': json.dumps(title),
-              'due_date': due_date.strftime('%Y-%m-%dT%H:%M:%S+00:00') if due_date else json.dumps(due_date),
-              'assignee_ids': ', '.join([json.dumps(id) for id in assignee_ids]),
-              'label_ids': ', '.join([json.dumps(id) for id in label_ids]),
+              'id': f'id:{json.dumps(id)}' if id else '',
+              'title': f'title:{json.dumps(title)}' if title else '',
+              'due_date': f'due_date: {str_due_date}' if due_date else '',
+              'assignee_ids': f'assignees_ids: {str_assignees}' if assignee_ids else '',
+              'label_ids': f'label_ids: {str_label_ids}' if label_ids else '',
               'response_fields': response_fields,
           }
           return self.request(query, headers).get('data', {}).get('updateCard', {}).get('card')
@@ -1329,6 +1332,53 @@ class Pipefy(object):
           query = '{ pipe (id: %(id)s) { %(response_fields)s } }' % {
               'id': json.dumps(id),
               'response_fields': response_fields,
+          }
+          return self.request(query, headers).get('data', {})
+        
+        except Exception as err:
+          raise exceptions(err)
+
+
+    def check_webhook(self, id:list, headers={}):
+        """ Show Webhooks: Get a pipe by its identifier. """
+        try:
+          ids = json.dumps(id[0]) if len(id) == 1 else id
+          response_fields = response_fields or 'webhooks{ id name actions url email headers }'
+          
+          query = '{ pipe (id: %(id)s) { %(response_fields)s } }' % {
+              'id': ids,
+              'response_fields': response_fields,
+          }
+          return self.request(query, headers).get('data', {})
+        
+        except Exception as err:
+          raise exceptions(err)
+
+
+    def create_webhook(self, pipe_id:int, email:str, actions:list, name_webhook:str, url:str, headers={}):
+        """ Show Webhooks: Get a pipe by its identifier. """
+        try:
+          response_fields = response_fields or 'webhooks{ id actions url}'
+          
+          query = '''
+              mutation {
+              createWebhook(
+                  input: {
+                      email: %(email)s,
+                      actions: %(actions)s,
+                      name: %(name_webhook)s,
+                      pipe_id: %(pipe_id)s,
+                      url: %(url)s
+                  }
+              ) { %(response_fields)s }
+              }
+          ''' % {
+                  'email':email,
+                  'actions':actions,
+                  'name_webhook':name_webhook,
+                  'pipe_id': pipe_id,
+                  'url':url,
+                  'response_fields': response_fields,
           }
           return self.request(query, headers).get('data', {})
         
