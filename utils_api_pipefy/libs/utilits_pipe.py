@@ -1,8 +1,8 @@
 import logging
 import time
 from utils_api_pipefy.libs.pipefy import Pipefy
-from utils_api_pipefy.libs.log import log
 from utils_api_pipefy.libs.excepts import exceptions
+from utils_api_pipefy.libs.log import log
 
 log().loginit()
 

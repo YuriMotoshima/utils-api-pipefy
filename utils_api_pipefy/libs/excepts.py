@@ -1,7 +1,10 @@
 import json
 import sys
-from traceback import (StackSummary, TracebackException, walk_tb)
 import logging
+from traceback import (StackSummary, TracebackException, walk_tb)
+from utils_api_pipefy.libs.log import log
+
+log().loginit()
 
 class exceptions(Exception):
     

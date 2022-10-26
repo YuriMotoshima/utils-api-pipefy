@@ -625,7 +625,7 @@ class Pipefy(object):
               'id': f'id:{json.dumps(id)}' if id else '',
               'title': f'title:{json.dumps(title)}' if title else '',
               'due_date': f'due_date: {str_due_date}' if due_date else '',
-              'assignee_ids': f'assignees_ids: {str_assignees}' if assignee_ids else '',
+              'assignee_ids': f'assignee_ids: {str_assignees}' if assignee_ids else '',
               'label_ids': f'label_ids: {str_label_ids}' if label_ids else '',
               'response_fields': response_fields,
           }
@@ -1378,6 +1378,35 @@ class Pipefy(object):
                   'name_webhook':name_webhook,
                   'pipe_id': pipe_id,
                   'url':url,
+                  'response_fields': response_fields,
+          }
+          return self.request(query, headers).get('data', {})
+        
+        except Exception as err:
+          raise exceptions(err)
+
+
+    def create_presigned_url(self, organization_id:int, file_name_path:str, client_mutation_id:str=None, content_type:str=None, headers={}):
+        """ Created Url: Get a Organization ID and FilePath to created url. """
+        try:
+          response_fields = response_fields or '{ clientMutationId url downloadUrl}'
+          
+          query = '''
+              mutation {
+              createPresignedUrl(
+                  input: {
+                      organizationId: %(organization_id)s,
+                      fileName: %(file_name_path)s,
+                      %(client_mutation_id)s,
+                      %(content_type)s,
+                  }
+              ) { %(response_fields)s }
+              }
+          ''' % {
+                  'organization_id':organization_id,
+                  'file_name_path':file_name_path,
+                  'client_mutation_id':f'clientMutationId:{client_mutation_id}',
+                  'content_type': f'contentType:{content_type}',
                   'response_fields': response_fields,
           }
           return self.request(query, headers).get('data', {})
