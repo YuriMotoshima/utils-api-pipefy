@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
-import requests
 import json
 import time
 import re
+
+import requests
+from requests import Session
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 import urllib3
+
 from utils_api_pipefy.libs.excepts import exceptions
 urllib3.disable_warnings()
+
 
 class Pipefy(object):
     """ Integration class with Pipefy rest api. """
@@ -20,6 +26,11 @@ class Pipefy(object):
       
       def get_request(headers:dict, query:str):
         session_request = requests.Session()
+        retry = Retry(total=5, backoff_factor=45)
+        adapter = HTTPAdapter(max_retries=retry)
+        session_request.mount("https://", adapter)
+        session_request.mount("http://", adapter)
+        
         resp = session_request.post( self.endpoint, json={ schema : query }, headers=headers, verify=False)
         return resp
       
