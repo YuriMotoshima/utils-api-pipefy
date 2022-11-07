@@ -6,13 +6,10 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 
 from dotenv import load_dotenv
 
-from utils_api_pipefy.libs.log import log
 from utils_api_pipefy.libs.excepts import exceptions
 from utils_api_pipefy.libs.utilits_pipe import Pipe
 
 load_dotenv(dotenv_path=f"{getcwd()}/.env")
-log().loginit()
-
 class Engine(Pipe):
     def __init__(self, TOKEN=None, HOST=None, PIPE=None, NONPHASES=None):
         self.TOKEN = TOKEN or environ.get('TOKEN')

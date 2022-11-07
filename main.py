@@ -5,10 +5,10 @@ import logging
 from dotenv import load_dotenv
 from utils_api_pipefy.libs.engine import Engine
 from utils_api_pipefy.libs.excepts import exceptions
-from utils_api_pipefy.libs.log import log
+from utils_api_pipefy.libs.log import loginit
 
 load_dotenv(dotenv_path=fr"{os.getcwd()}\.env")
-log().loginit()
+loginit()
 
 if __name__ == "__main__":
     
