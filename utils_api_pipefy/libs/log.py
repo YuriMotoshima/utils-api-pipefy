@@ -2,7 +2,7 @@ from os import (path, environ, getcwd, makedirs)
 from sys import stdout
 from datetime import datetime
 import logging
-from logging import (Logger, FileHandler, StreamHandler, basicConfig)
+from logging import (FileHandler, StreamHandler, basicConfig)
 from dotenv import load_dotenv
 from urllib3.connectionpool import log as urllib_log
 
@@ -17,8 +17,10 @@ def loginit(name_file_log:str = None, dev_env:str=None, disable_log:str=None):
     dev_env = environ.get("LOGENV") if environ.get("LOGENV") else dev_env
     disable_log = environ.get("DISABLELOG") if environ.get("DISABLELOG") else disable_log
     valid_variables = set([name_file_log, dev_env, disable_log])
+    
     if disable_log == "Treu" or disable_log == True:
         urllib_log.disabled = True
+        
     if valid_variables:
         filename = f'{name_file_log} - {datetime.now().strftime("%d-%m-%Y %H")}.log'
         filename = f'[DEV] {filename}' if dev_env == 'DEV' else f'[PROD] {filename}'

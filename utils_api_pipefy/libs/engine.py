@@ -95,16 +95,15 @@ class Engine(Pipe):
         Enviar em `data`:
         
             - card_id <== Número do card a ser atualizado
-            - fields <== {} Dicionário informando o ID do field e Valor a ser preenchido.
+            - fields <== [{}] Lista com Dicionários informando o fieldId do field e value a ser preenchido.
             
         Exemplo `data`:
             [{
                 "card_id":"12132131",
-                "fields":{
-                        "mensagem_de_duplicidade":"Card duplicado",
-                        "dados_ok":"Não",
-                        "title":"Card Improcedente"
-                    }
+                "fields":[ 
+                        { "fieldId": "ultimo_after_api", "value": f'{value_ultimo_after_api}' }, 
+                        { "fieldId": "fases_restantes", "value": f'{value_fases_restantes}' }
+                        ]
             }]
         
         """

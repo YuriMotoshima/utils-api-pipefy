@@ -678,25 +678,25 @@ class Pipefy(object):
           raise exceptions(err)
       
       
-    def update_fields_card(self, node_id, field_id=None, new_value=None, response_fields=None, headers={}):
+    def update_fields_card(self, node_id, field_id=None, new_value=None, values:dict=None, response_fields=None, headers={}):
       """ Update fields card: Mutation to update fields a card, in case of success a query is returned. """
       try:
-        
-        response_fields = response_fields or r'{fieldId:"' + field_id + r'" value:"'+ new_value + r'"}'
+        values = values or self.__prepare_json_dict({ "fieldId": f"{field_id}", "value": f'{new_value}' })
+        response_fields = response_fields or "clientMutationId sucess"
         
         query = '''
             mutation{
               updateFieldsValues(input:{
                 nodeId:%(node_id)s
-                values:[%(response_fields)s]
+                values:%(values)s
               }) {
-                clientMutationId
-                success
+                %(response_fields)s
               }
             }
         '''%{
           'node_id':json.dumps(node_id),
           'response_fields': response_fields,
+          'values': self.__prepare_json_dict(values)
         }
         return self.request(query, headers).get('data', {}).get('updateFieldsValues', {}).get('success')
       

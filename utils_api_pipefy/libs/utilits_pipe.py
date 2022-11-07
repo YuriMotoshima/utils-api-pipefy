@@ -313,11 +313,9 @@ class Pipe(Pipefy):
         Função de atualização de campos do Pipefy - API update_fields_card.
         """
         try:
-            
-            response_fields = ', '.join(['{fieldId: "%s", value: "%s"}' % (key, fields[key]) for key in fields])
-            
+            values = fields
             super().__init__(token=self.TOKEN, host=self.HOST)
-            response = self.update_fields_card(node_id=card_id, response_fields=response_fields)
+            response = self.update_fields_card(node_id=card_id, values=values)
             logging.info(f"Response: {response}")
         except Exception as e:
             logging.info(e)
