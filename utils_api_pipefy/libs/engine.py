@@ -22,7 +22,7 @@ class Engine(Pipe):
 
     def _run_enable_disable_fields(func):
         def parser_enable_disable(args, kwargs) -> tuple:
-            data = list(set([x for n in kwargs["data"] for x in n["fields"]]))
+            data = list(set([x['fieldId'] for n in kwargs["data"] for x in n["fields"]]))
             list_enable = []
             list_disable = []
 

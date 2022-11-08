@@ -64,6 +64,7 @@ class Pipe(Pipefy):
                 self.phases = {"phases" : [{ "id": d.get("id"), "nameFase": d.get("name"), "informacoes": [ "firstTimeIn", "lastTimeOut"] } for d in campos_pipefy['phases']]}
             else:
                 logging.info(f"Por falta de informação do PIPE, não foi gerado as variávels : [self.phases_id, self.fields, self.phases]")
+                raise exceptions(f"Invformar ID do Pipe que deseja consultar")
                 
         except Exception as e:
             logging.info(e)
