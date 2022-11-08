@@ -12,13 +12,13 @@ stdout_handler = StreamHandler(stdout)
 handlers = [stdout_handler]
 basicConfig(level=10,format=formatter, handlers=handlers, encoding='utf-8')
 
-def loginit(name_file_log:str = None, dev_env:str=None, disable_log:str=None):
+def loginit(name_file_log:str = None, dev_env:str=None, disable_log:str=True):
     name_file_log = environ.get("LOGNAME") if environ.get("LOGNAME") else name_file_log
     dev_env = environ.get("LOGENV") if environ.get("LOGENV") else dev_env
     disable_log = environ.get("DISABLELOG") if environ.get("DISABLELOG") else disable_log
-    valid_variables = set([name_file_log, dev_env, disable_log])
+    valid_variables = list(set([name_file_log, dev_env, disable_log]))
     
-    if bool(disable_log) == True:
+    if (disable_log == True) or (disable_log == "True"):
         urllib_log.disabled = True
         return
         
