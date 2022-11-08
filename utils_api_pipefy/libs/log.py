@@ -18,8 +18,9 @@ def loginit(name_file_log:str = None, dev_env:str=None, disable_log:str=None):
     disable_log = environ.get("DISABLELOG") if environ.get("DISABLELOG") else disable_log
     valid_variables = set([name_file_log, dev_env, disable_log])
     
-    if disable_log == "Treu" or disable_log == True:
+    if bool(disable_log) == True:
         urllib_log.disabled = True
+        return
         
     if valid_variables:
         filename = f'{name_file_log} - {datetime.now().strftime("%d-%m-%Y %H")}.log'
