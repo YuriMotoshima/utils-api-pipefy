@@ -17,7 +17,7 @@ NONPHASES= [numeros_fases_ignoradas]<br>
 TOKEN= seu_token<br>
 LOGENV = DEV or PROD [ PROD remove urlib3 logs ]<br>
 LOGNAME = nome_arquivo_logs<br>
-DISABLELOG = True or False [False disabilita a criação de pasta e arquivo de logs, temos essa opção para utlização em plataformas como Google Cloud Platform, neste caso o logging apenas imprime da tela, sem salvar o log.]<br>
+DISABLELOG = True or False [True desabilita a criação de pasta e arquivo de logs, temos essa opção para utilização em plataformas como Google Cloud Platform, neste caso o logging apenas imprime da tela, sem salvar o log.]<br>
 
 ## Exemplo de uso
 
@@ -26,13 +26,11 @@ import os
 import json
 import time
 import logging
-from dotenv import load_dotenv
 from utils_api_pipefy.libs.engine import Engine
 from utils_api_pipefy.libs.excepts import exceptions
-from utils_api_pipefy.libs.log import log
+from utils_api_pipefy.libs.log import loginit
 
-load_dotenv(dotenv_path=fr"{os.getcwd()}\.env")
-log().loginit()
+loginit()
 
 if __name__ == "__main__":
     
@@ -44,12 +42,13 @@ if __name__ == "__main__":
         print(json.dumps(eng.phases_id, ensure_ascii=False, indent=2))
         print(json.dumps(eng.fields, ensure_ascii=False, indent=2))
         print(json.dumps(eng.phases, ensure_ascii=False, indent=2))
-        
+                
         a = time.time()
         data=eng.run_all_data_phases()
         print(f"\n\nTempo total: {time.time()-a}\n\n")
         print()
     except Exception as err:
         raise exceptions(err)
+
 
 ```

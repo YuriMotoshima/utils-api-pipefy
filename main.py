@@ -2,12 +2,10 @@ import os
 import json
 import time
 import logging
-from dotenv import load_dotenv
 from utils_api_pipefy.libs.engine import Engine
 from utils_api_pipefy.libs.excepts import exceptions
 from utils_api_pipefy.libs.log import loginit
 
-load_dotenv(dotenv_path=fr"{os.getcwd()}\.env")
 loginit()
 
 if __name__ == "__main__":
