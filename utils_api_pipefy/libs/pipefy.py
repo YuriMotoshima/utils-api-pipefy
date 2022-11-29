@@ -1350,13 +1350,16 @@ class Pipefy(object):
           raise exceptions(err)
 
 
-    def check_webhook(self, id:list, headers={}):
+    def check_webhook(self, id:list, response_fields=None, headers={}):
         """ Show Webhooks: Get a pipe by its identifier. """
         try:
-          ids = json.dumps(id[0]) if len(id) == 1 else id
+          if type(id) != list:
+            raise exceptions(f"Check type the id!")
+          
+          ids = int(id[0]) if len(id) == 1 else [int(i) for i in id]
           response_fields = response_fields or 'webhooks{ id name actions url email headers }'
           
-          query = '{ pipe (id: %(id)s) { %(response_fields)s } }' % {
+          query = '{ pipes (ids: %(id)s) { %(response_fields)s } }' % {
               'id': ids,
               'response_fields': response_fields,
           }
@@ -1365,8 +1368,7 @@ class Pipefy(object):
         except Exception as err:
           raise exceptions(err)
 
-
-    def create_webhook(self, pipe_id:int, email:str, actions:list, name_webhook:str, url:str, headers={}):
+    def create_webhook(self, pipe_id:int, email:str, actions:list, name_webhook:str, url:str, response_fields=None, headers={}):
         """ Show Webhooks: Get a pipe by its identifier. """
         try:
           response_fields = response_fields or 'webhooks{ id actions url}'
@@ -1397,7 +1399,7 @@ class Pipefy(object):
           raise exceptions(err)
 
 
-    def create_presigned_url(self, organization_id:int, file_name_path:str, client_mutation_id:str=None, content_type:str=None, headers={}):
+    def create_presigned_url(self, organization_id:int, file_name_path:str, response_fields=None, client_mutation_id:str=None, content_type:str=None, headers={}):
         """ Created Url: Get a Organization ID and FilePath to created url. """
         try:
           response_fields = response_fields or '{ clientMutationId url downloadUrl}'
