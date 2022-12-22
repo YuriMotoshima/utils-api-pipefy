@@ -681,7 +681,7 @@ class Pipefy(object):
     def update_fields_card(self, node_id, field_id=None, new_value=None, values:dict=None, response_fields=None, headers={}):
       """ Update fields card: Mutation to update fields a card, in case of success a query is returned. """
       try:
-        values = values or self.__prepare_json_dict({ "fieldId": f"{field_id}", "value": f'{new_value}' })
+        values = values or { "fieldId": f"{field_id}", "value": f'{new_value}' }
         response_fields = response_fields or "clientMutationId success"
         
         query = '''
