@@ -1402,14 +1402,14 @@ class Pipefy(object):
     def create_presigned_url(self, organization_id:int, file_name_path:str, response_fields=None, client_mutation_id:str=None, content_type:str=None, headers={}):
         """ Created Url: Get a Organization ID and FilePath to created url. """
         try:
-          response_fields = response_fields or '{ clientMutationId url downloadUrl}'
+          response_fields = response_fields or 'url downloadUrl'
           
           query = '''
               mutation {
               createPresignedUrl(
                   input: {
                       organizationId: %(organization_id)s,
-                      fileName: %(file_name_path)s,
+                      fileName: "%(file_name_path)s",
                       %(client_mutation_id)s,
                       %(content_type)s,
                   }
@@ -1418,8 +1418,8 @@ class Pipefy(object):
           ''' % {
                   'organization_id':organization_id,
                   'file_name_path':file_name_path,
-                  'client_mutation_id':f'clientMutationId:{client_mutation_id}',
-                  'content_type': f'contentType:{content_type}',
+                  'client_mutation_id':f'clientMutationId:{client_mutation_id}' if client_mutation_id else '',
+                  'content_type': f'contentType:{content_type}' if content_type else '',
                   'response_fields': response_fields,
           }
           return self.request(query, headers).get('data', {})
