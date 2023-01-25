@@ -6,7 +6,7 @@ import re
 import requests
 from requests import Session
 from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
+from urllib3.util.retry import Retry
 import urllib3
 
 from utils_api_pipefy.libs.excepts import exceptions
@@ -498,7 +498,7 @@ class Pipefy(object):
       """ List fiels: Get fields by pipe identifier. """
       try:
         
-        response_fields = response_fields or ' cards_count phases { id name fields { id label editable uuid required} } start_form_fields { id label editable uuid required } '
+        response_fields = response_fields or ' organization { id } cards_count phases { id name fields { id label editable uuid required} } start_form_fields { id label editable uuid required } '
         query = '{ pipe(id:%(pipe_id)s) { %(response_fields)s } }' % {
           'pipe_id': json.dumps(pipe_id),
           'response_fields': response_fields
@@ -576,7 +576,7 @@ class Pipefy(object):
         try:
           
           response_fields = response_fields or 'title assignees { id } comments { id } comments_count' \
-                  ' current_phase { name } done due_date fields { name value } labels { name } phases_history ' \
+                  ' current_phase { name } done due_date fields { field { id type } name value } labels { name } phases_history ' \
                   '{ phase { name } firstTimeIn lastTimeOut } url '
           query = '{ card(id: %(id)s) { %(response_fields)s } }' % {
               'id': json.dumps(id),

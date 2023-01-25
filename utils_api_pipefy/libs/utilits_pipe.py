@@ -53,18 +53,24 @@ class Pipe(Pipefy):
             
             if self.PIPE:
                 campos_pipefy = self.consulta_fields(pipe_id=self.PIPE)
-                
-                if self.NONPHASES:
-                    self.phases_id = [n.get("id") for n in campos_pipefy["phases"] if not n.get("id") in eval(self.NONPHASES)]
-                else:
-                    self.phases_id = [n.get("id") for n in campos_pipefy["phases"]]
-                
-                self.fields = {"fields":[{"id": d.get("id"), "nameField":d.get("label"), "editable":d.get("editable"), "uuid":d.get("uuid") , "required":d.get("required")} for n in campos_pipefy['phases'] for d in n['fields']] + [{"id": n.get("id"), "nameField": n.get("label"), "editable":n.get("editable"), "uuid":n.get("uuid"), "required":n.get("required")} for n in campos_pipefy['start_form_fields']]}
+                if campos_pipefy:
+                    self.organization_id = campos_pipefy["organization"]["id"]
 
-                self.phases = {"phases" : [{ "id": d.get("id"), "nameFase": d.get("name"), "informacoes": [ "firstTimeIn", "lastTimeOut"] } for d in campos_pipefy['phases']]}
+                    if self.NONPHASES:
+                        self.phases_id = [n.get("id") for n in campos_pipefy["phases"] if not n.get("id") in eval(self.NONPHASES)]
+                    else:
+                        self.phases_id = [n.get("id") for n in campos_pipefy["phases"]]
+                    
+                    self.fields = {"fields":[{"id": d.get("id"), "nameField":d.get("label"), "editable":d.get("editable"), "uuid":d.get("uuid") , "required":d.get("required")} for n in campos_pipefy['phases'] for d in n['fields']] + [{"id": n.get("id"), "nameField": n.get("label"), "editable":n.get("editable"), "uuid":n.get("uuid"), "required":n.get("required")} for n in campos_pipefy['start_form_fields']]}
+
+                    self.phases = {"phases" : [{ "id": d.get("id"), "nameFase": d.get("name"), "informacoes": [ "firstTimeIn", "lastTimeOut"] } for d in campos_pipefy['phases']]}
+                else:
+                    logging.info(f"Verificar se o token está habilitado ao pipefy.")
+                    raise exceptions(f"Verificar se o token está habilitado ao pipefy.")
+
             else:
                 logging.info(f"Por falta de informação do PIPE, não foi gerado as variávels : [self.phases_id, self.fields, self.phases]")
-                raise exceptions(f"Invformar ID do Pipe que deseja consultar")
+                raise exceptions(f"Informar ID do Pipe que deseja consultar")
                 
         except Exception as e:
             logging.info(e)
