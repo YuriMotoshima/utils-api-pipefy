@@ -119,3 +119,4 @@ dmypy.json
 # VS Code
 .vscode
 .vscode/
+.vs/
