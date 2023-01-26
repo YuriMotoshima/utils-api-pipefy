@@ -12,7 +12,7 @@ stdout_handler = StreamHandler(stdout)
 handlers = [stdout_handler]
 basicConfig(level=10,format=formatter, handlers=handlers, encoding='utf-8')
 
-def loginit(name_file_log:str = None, dev_env:str=None, disable_log:str=True):
+def loginit(name_file_log:str = "Utils_Api_Pipefy", dev_env:str="DEV", disable_log:str=True):
     name_file_log = environ.get("LOGNAME") if environ.get("LOGNAME") else name_file_log
     dev_env = environ.get("LOGENV") if environ.get("LOGENV") else dev_env
     disable_log = environ.get("DISABLELOG") if environ.get("DISABLELOG") else disable_log

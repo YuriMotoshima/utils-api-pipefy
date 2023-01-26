@@ -54,6 +54,7 @@ class Pipe(Pipefy):
             if self.PIPE:
                 campos_pipefy = self.consulta_fields(pipe_id=self.PIPE)
                 if campos_pipefy:
+                    
                     self.organization_id = campos_pipefy["organization"]["id"]
 
                     if self.NONPHASES:
@@ -268,6 +269,52 @@ class Pipe(Pipefy):
             raise exceptions(e)
     
     
+    def get_data_find_card(self, pipe_id:str, field_id:str, field_value:str) -> dict:
+        """
+        Função que pega todos os cards da phase selecionada fasendo a paginação de acordo com a tag (pageInfo) retornada pelo Pipefy.
+        Utiliza a função (parse_data_cards) para organizar os dados recebidos.
+        
+        Retorna um dicionario contendo Status : boolean e Data : list.
+        
+        `Exemplo:` {"Status":True,"Data": [(....)(....)]}
+        """
+        try:
+            response_phase = self.find_card(pipe_id=pipe_id, field_id=field_id, field_value=field_value)
+            
+            next_page_phase = response_phase['pageInfo']['hasNextPage']
+            
+            response_edges_phase = response_phase.get('edges', {})
+            
+            if response_edges_phase:
+                
+                response_dados = [n["node"] for n in response_edges_phase if response_edges_phase]
+                
+                dados_cards = self.parse_data_cards(response_dados=response_dados)
+                
+                while next_page_phase:
+                    
+                    super().__init__(token=self.TOKEN, host=self.HOST)
+                    
+                    after = response_phase['pageInfo']['endCursor'] if response_phase['pageInfo']['hasNextPage'] else None
+                    
+                    response_phase = self.find_card(pipe_id=pipe_id, field_id=field_id, field_value=field_value, after=after)
+                    
+                    next_page_phase = response_phase['pageInfo']['hasNextPage']
+            
+                    response_edges_phase = response_phase.get('edges', {})
+                    
+                    response_dados = [n["node"] for n in response_edges_phase]
+                    
+                    dados_cards += self.parse_data_cards(response_dados=response_dados)
+                    
+                return {"Status":True,"Data": dados_cards}
+            else:
+                return {"Status":False,"Data": None}
+
+        except Exception as e:
+            logging.info(e)
+            raise exceptions(e)
+        
     def get_data_phase(self, phase_id : str) -> dict:
         """
         Função que pega todos os cards da phase selecionada fasendo a paginação de acordo com a tag (pageInfo) retornada pelo Pipefy.

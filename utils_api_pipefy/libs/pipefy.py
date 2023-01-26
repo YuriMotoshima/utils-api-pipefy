@@ -6,7 +6,7 @@ import re
 import requests
 from requests import Session
 from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
+from requests.packages.urllib3.util.retry import Retry
 import urllib3
 
 from utils_api_pipefy.libs.excepts import exceptions
@@ -246,6 +246,35 @@ class Pipefy(object):
             }
             return self.request(query, headers).get('data', {}).get('phase')
         
+        except Exception as err:
+          raise exceptions(err)
+
+    def find_card(self, pipe_id:str, field_id: str, field_value:str, after = None, response_fields=None, headers={}):
+        """ Show phase: Get a phase by its identifier. """
+        try:
+          response_fields = response_fields or 'edges { node { id title finished_at updated_at createdBy { id name } assignees { id name email } comments { text } comments_count current_phase { name } done due_date fields { name value datetime_value field { id } array_value } labels { name } createdAt phases_history { phase { name id } created_at duration firstTimeIn lastTimeOut } url } } pageInfo { endCursor hasNextPage }'
+          if after:
+            query = '{ findCards(pipeId: %(pipe_id)s, after: %(after)s , search: {fieldId: %(field_id)s, ' \
+                    'fieldValue: %(field_value)s}) {%(response_card)s }}' \
+                    % {
+                        "pipe_id": json.dumps(pipe_id),
+                        "field_id": json.dumps(field_id),
+                        "after": json.dumps(after),
+                        "field_value": json.dumps(field_value),
+                        "response_card": response_fields
+                    }
+            return self.request(query, headers).get('data', {}).get('findCards')
+          
+          else:
+            query = '{findCards(pipeId: %(pipe_id)s, search: {fieldId: %(field_id)s, ' \
+                    'fieldValue: %(field_value)s}) {%(response_card)s}}' \
+                    % {
+                        "pipe_id": json.dumps(pipe_id),
+                        "field_id": json.dumps(field_id),
+                        "field_value": json.dumps(field_value),
+                        "response_card": response_fields
+                    }
+            return self.request(query, headers).get('data', {}).get('findCards')
         except Exception as err:
           raise exceptions(err)
 
@@ -576,7 +605,7 @@ class Pipefy(object):
         try:
           
           response_fields = response_fields or 'title assignees { id } comments { id } comments_count' \
-                  ' current_phase { name } done due_date fields { field { id type } name value } labels { name } phases_history ' \
+                  ' current_phase { name } done due_date fields { name value } labels { name } phases_history ' \
                   '{ phase { name } firstTimeIn lastTimeOut } url '
           query = '{ card(id: %(id)s) { %(response_fields)s } }' % {
               'id': json.dumps(id),
