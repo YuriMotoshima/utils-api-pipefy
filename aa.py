@@ -1,1 +1,0 @@
- "edges { node { id title finished_at updated_at createdBy { id name } assignees { id name email } comments { text } comments_count current_phase { name } done due_date fields { name value datetime_value field { id } array_value } labels { name } createdAt phases_history { phase { name id } created_at duration firstTimeIn lastTimeOut } url } } pageInfo { endCursor hasNextPage }"
