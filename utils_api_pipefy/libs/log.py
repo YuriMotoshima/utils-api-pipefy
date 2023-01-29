@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from urllib3.connectionpool import log as urllib_log
 
 load_dotenv(dotenv_path=fr"{getcwd()}\.env")
+
 formatter = '[%(levelname)s]: [%(filename)s line - %(lineno)d] | Date_Time: %(asctime)s | Function: [%(funcName)s] | Message: ➪ %(message)s'
 stdout_handler = StreamHandler(stdout)
 handlers = [stdout_handler]

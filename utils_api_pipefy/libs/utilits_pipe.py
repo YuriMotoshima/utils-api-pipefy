@@ -38,7 +38,23 @@ class Pipe(Pipefy):
         self.__get_field_and_phases()
         self.columns = self.get_coluns_id()
     
-       
+    def set_pipe_id(self, pipe_id) -> None:
+        """set_pipe_id Carregar as variaveis [ self.columns, self.phases_id, self.fields, self.phases ] de acordo com o Pipefy ID informado.
+
+        Args:
+            pipe_id (_type_): Pipefy ID
+
+        Raises:
+            exceptions: Erro ao buscar dados no pipe id informado 
+        """
+        try:
+            self.PIPE = pipe_id
+            self.__get_field_and_phases()
+            self.columns = self.get_coluns_id()
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
+    
     def __get_field_and_phases(self) -> None:
         """
         Função para pegar as fases, campos e id das fases do Pipefy
@@ -71,11 +87,10 @@ class Pipe(Pipefy):
 
             else:
                 logging.info(f"Por falta de informação do PIPE, não foi gerado as variávels : [self.phases_id, self.fields, self.phases]")
-                raise exceptions(f"Informar ID do Pipe que deseja consultar")
                 
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
     
     
     def __extract_basics(self, card : dict) -> list:
@@ -99,9 +114,9 @@ class Pipe(Pipefy):
                     card.get("updated_at")
             ]
             return fields
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
         
 
     def __extract_custom(self, card : dict) -> list:
@@ -115,9 +130,9 @@ class Pipe(Pipefy):
         try:
             card_fields = card["fields"]
             return [card_fields.get(n["id"],{}).get("value") for n in self.fields["fields"]]
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
         
 
     def __extract_phases(self, card : dict) -> list:
@@ -140,9 +155,9 @@ class Pipe(Pipefy):
                 else:
                     [fields.append(None) for _ in informacoes]
             return fields
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
         
         
     def parse_phase_history(self, card : dict) -> dict:
@@ -158,9 +173,9 @@ class Pipe(Pipefy):
             history = {d["phase"]["id"]: {"firstTimeIn":d["firstTimeIn"],"lastTimeOut":d["lastTimeOut"],"duration": d["duration"], "created_at": d["created_at"]} for d in card["phases_history"]}
             card["phases_history"] = history
             return card
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
         
         
     def get_fields(self, card : dict) -> dict:
@@ -177,9 +192,9 @@ class Pipe(Pipefy):
             new_fields = { item["field"]["id"] : {"value": item.get("value"), "array_value": item.get("array_value"), "datetime_value": item.get("dt_time_value")} for item in card["fields"] }
             card["fields"] = new_fields
             return card
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
             
             
     def parse_card(self, card : list) -> tuple:
@@ -200,9 +215,9 @@ class Pipe(Pipefy):
             all_fields = basic_fields + custom_fields + phases_fields
 
             return tuple(all_fields)
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
         
         
     def get_coluns_id(self) -> tuple:
@@ -240,9 +255,9 @@ class Pipe(Pipefy):
             else:
                 logging.info(f"Por falta de informação do PIPE, não foi gerado as variávels : [self.columns]")
                 return tuple(["Por falta de informação do PIPE, não foi gerado as variávels : [self.columns]"])
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
           
             
     def parse_data_cards(self, response_dados : list) -> list:
@@ -264,9 +279,9 @@ class Pipe(Pipefy):
             dados_do_cards = [ self.parse_card(card) for card in trata_campos ]
             
             return dados_do_cards
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
     
     
     def get_data_find_card(self, pipe_id:str, field_id:str, field_value:str) -> dict:
@@ -311,9 +326,9 @@ class Pipe(Pipefy):
             else:
                 return {"Status":False,"Data": None}
 
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
         
     def get_data_phase(self, phase_id : str) -> dict:
         """
@@ -357,9 +372,9 @@ class Pipe(Pipefy):
             else:
                 return {"Status":False,"Data": None}
 
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
         
     
     def update_fields_pipe(self, card_id : str, fields : dict) -> None:
@@ -371,9 +386,9 @@ class Pipe(Pipefy):
             super().__init__(token=self.TOKEN, host=self.HOST)
             response = self.update_fields_card(node_id=card_id, values=values)
             logging.info(f"Response: {response}")
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
     
     
     def create_cards_pipe(self, fields : dict) -> None:
@@ -385,9 +400,9 @@ class Pipe(Pipefy):
             super().__init__(token=self.TOKEN, host=self.HOST)
             response = self.create_card(pipe_id=self.PIPE, fields_attributes=fields)
             logging.info(f"Response: {response}")
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
     
     
     def create_cards_pipe_phase(self, fields : dict) -> None:
@@ -399,9 +414,9 @@ class Pipe(Pipefy):
             super().__init__(token=self.TOKEN, host=self.HOST)
             response = self.create_card_phase( pipe_id=self.PIPE, fields_attributes=fields.get("fields"), due_date=fields.get("due_date"), phase_id=fields.get("phase_id"), label_ids=[fields.get("label_ids")] )
             logging.info(f"Response: {response}")
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
     
     
     def delete_cards(self, card_id : str) -> dict:
@@ -412,9 +427,9 @@ class Pipe(Pipefy):
             super().__init__(token=self.TOKEN, host=self.HOST)
             response = self.delete_card(id=card_id)
             logging.info(f"Exclusão de Cards - Card_ID: {card_id} - Response: {response}.")
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
 
 
     def change_properties_fields(self, data : str ) -> None:
@@ -425,9 +440,9 @@ class Pipe(Pipefy):
             super().__init__(token=self.TOKEN, host=self.HOST)
             response = self.update_properties_fields(fields_attributes=data)
             logging.info(f"Response: {response}.")
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
         
         
     def get_data_cards_filter(self, pipe_id, filter_date : str = None) -> dict:
@@ -474,7 +489,7 @@ class Pipe(Pipefy):
             else:
                 return {"Status":False,"Data": ""}
 
-        except Exception as e:
-            self.logger.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            self.logger.info(error)
+            raise exceptions(error)
         
