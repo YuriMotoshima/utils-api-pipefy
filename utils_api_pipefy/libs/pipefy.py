@@ -4,10 +4,10 @@ import time
 import re
 
 import requests
-from requests import Session
 from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
+
 import urllib3
+from urllib3.util.retry import Retry
 
 from utils_api_pipefy.libs.excepts import exceptions
 urllib3.disable_warnings()

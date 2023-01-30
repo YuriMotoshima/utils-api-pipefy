@@ -1,15 +1,17 @@
-from os import environ, getcwd
+import re
 import logging
 from typing import NoReturn
 from datetime import datetime
+from os import (environ, getcwd)
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
-from dotenv import load_dotenv
+import requests
+from requests.adapters import HTTPAdapter
 
+from urllib3.util.retry import Retry
 from utils_api_pipefy.libs.excepts import exceptions
 from utils_api_pipefy.libs.utilits_pipe import Pipe
 
-load_dotenv(dotenv_path=f"{getcwd()}/.env")
 class Engine(Pipe):
     def __init__(self, TOKEN=None, HOST=None, PIPE=None, NONPHASES=None):
         self.TOKEN = TOKEN or environ.get('TOKEN')
@@ -42,8 +44,8 @@ class Engine(Pipe):
                 try:
                     args[0].change_properties_fields(data=lte)
                     func(args[0], kwargs["data"])
-                except Exception as e:
-                    raise exceptions(e)
+                except Exception as error:
+                    raise exceptions(error)
                 finally:
                     args[0].change_properties_fields(data=ltd)
             else:
@@ -82,9 +84,9 @@ class Engine(Pipe):
                         dados.extend(worker.result().get("Data"))
             
             return dados
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
 
 
     @_run_enable_disable_fields
@@ -115,9 +117,9 @@ class Engine(Pipe):
                         fields = key.get("fields")
                         exe.submit(self.update_fields_pipe, card_id, fields)
                         
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
     
      
     def run_delete_all_cards(self) -> NoReturn:
@@ -142,9 +144,9 @@ class Engine(Pipe):
             else:
                 logging.info(f"Opção incorreta, processo cancelado!")
                                   
-        except Exception as e:
-            logging.info(e)
-            raise  exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise  exceptions(error)
 
    
     def run_all_cards_filtered(self, first_date : str , operator : str, conditional : str = None, sec_operator : str = None, second_date : str = None):
@@ -181,9 +183,9 @@ class Engine(Pipe):
             dados.extend(self.get_data_cards_filter(pipe_id=self.PIPE, filter_date=conditional_filter).get("Data"))
             
             return dados
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
     
     
     def run_created_all_cards(self, data : list) -> NoReturn:
@@ -219,9 +221,9 @@ class Engine(Pipe):
                         fields = data[f]
                         exe.submit(self.create_cards_pipe, fields)
                         
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
         
         
     def run_created_all_cards_phase(self, data : list) -> NoReturn:
@@ -283,6 +285,46 @@ class Engine(Pipe):
                         n_query = data[f]
                         exe.submit(self.create_cards_pipe_phase, n_query)
                         
-        except Exception as e:
-            logging.info(e)
-            raise exceptions(e)
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
+        
+    def create_attachment_url(self, organization_id:str, name_file_attachment:str, file_path_attachment:str) -> str:
+        """create_attachment_url Caso rode essa collection em uma cloud, utilizar o caminho './tmp/'
+
+        Args:
+            organization_id (str): ID da Organização do Pipefy
+            name_file_attachment (str): Nome e extenção do arquivo (name.xlsx)
+            file_path_attachment (str): Caminho onde o arquivo está ('./tmp/)
+            
+        Returns:
+            str: regex com url para envio ao Pipefy
+        """
+        def get_request(headers:dict):
+            session_request = requests.Session()
+            retry = Retry(total=5, backoff_factor=45)
+            adapter = HTTPAdapter(max_retries=retry)
+            session_request.mount("https://", adapter)
+            session_request.mount("http://", adapter)
+            session_request.headers = headers
+            return session_request
+        
+        try:
+            full_file_path = fr'{file_path_attachment}/{name_file_attachment}'
+            empty_url = self.create_presigned_url(organization_id=organization_id, name_file_attachment=name_file_attachment)
+            open_attachment_binary = open(full_file_path, 'rb')
+            
+            session = get_request(headers=self.header)
+            
+            set_attachment_url = session.put(url=empty_url, data=open_attachment_binary)
+            
+            if set_attachment_url.status_code == 200:
+                return re.findall(r'orgs.*' + name_file_attachment, empty_url)[0]
+            
+            else:
+                raise exceptions(f"Verificar o retorno: {set_attachment_url.text} -  Status Code: {set_attachment_url.status_code}.")
+        
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
+        
