@@ -29,7 +29,6 @@ class Pipefy(object):
         retry = Retry(total=5, backoff_factor=45)
         adapter = HTTPAdapter(max_retries=retry)
         session_request.mount("https://", adapter)
-        session_request.mount("http://", adapter)
         
         resp = session_request.post( self.endpoint, json={ schema : query }, headers=headers, verify=False)
         return resp

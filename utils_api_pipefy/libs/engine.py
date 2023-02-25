@@ -305,7 +305,6 @@ class Engine(Pipe):
             retry = Retry(total=5, backoff_factor=45)
             adapter = HTTPAdapter(max_retries=retry)
             session_request.mount("https://", adapter)
-            session_request.mount("http://", adapter)
             session_request.headers = headers
             return session_request
         
