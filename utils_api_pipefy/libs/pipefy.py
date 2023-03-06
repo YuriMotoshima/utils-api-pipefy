@@ -509,7 +509,7 @@ class Pipefy(object):
           
           response_fields = response_fields or 'edges { node { id title assignees { id }' \
                   ' comments { text } comments_count current_phase { name } done due_date ' \
-                  'fields { name value } labels { name } phases_history { phase { name } firstTimeIn lastTimeOut } url } }'
+                  'fields { field { id uuid } name value } labels { name } phases_history { phase { name } firstTimeIn lastTimeOut } url } }'
                   
           query = '{ cards(pipe_id: %(pipe_id)s, first: %(count)s, search: %(search)s) { %(response_fields)s } }' % {
               'pipe_id': json.dumps(pipe_id),
@@ -604,7 +604,7 @@ class Pipefy(object):
         try:
           
           response_fields = response_fields or 'title assignees { id } comments { id } comments_count' \
-                  ' current_phase { name } done due_date fields { name value } labels { name } phases_history ' \
+                  ' current_phase { name } done due_date fields { field { id uuid } name value } labels { name } phases_history ' \
                   '{ phase { name } firstTimeIn lastTimeOut } url '
           query = '{ card(id: %(id)s) { %(response_fields)s } }' % {
               'id': json.dumps(id),
