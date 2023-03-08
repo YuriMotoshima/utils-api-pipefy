@@ -310,7 +310,7 @@ class Engine(Pipe):
         
         try:
             full_file_path = fr'{file_path_attachment}/{name_file_attachment}'
-            empty_url = self.create_presigned_url(organization_id=organization_id, name_file_attachment=name_file_attachment)
+            empty_url = self.create_presigned_url(organization_id=organization_id, file_name_path=name_file_attachment)
             open_attachment_binary = open(full_file_path, 'rb')
             
             session = get_request(headers=self.header)
