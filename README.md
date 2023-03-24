@@ -11,13 +11,13 @@ pip install utils-api-pipefy
 ```
 
 ## .env
->> HOST_PIPE=app or seu_host_pipefy<br>
->> PIPE= seu_numero_pipe<br>
->> NONPHASES= [numeros_fases_ignoradas]<br>
->> TOKEN= seu_token<br>
->> LOGENV = DEV or PROD [ PROD remove urlib3 logs ]<br>
->> LOGNAME = nome_arquivo_logs<br>
->> DISABLELOG = True or False [True desabilita a criação de pasta e arquivo de logs, temos essa opção para utilização em plataformas como Google Cloud Platform, neste caso o logging apenas imprime da tela, sem salvar o log.]<br>
+>> HOST_PIPE=app or seu_host_pipefy
+>> PIPE= seu_numero_pipe
+>> NONPHASES= [id das fases que devem ser ignoradas]
+>> TOKEN= seu_token
+>> LOGENV = DEV or PROD [ PROD remove urlib3 logs ]
+>> LOGNAME = nome_arquivo_logs
+>> DISABLELOG = True or False [True desabilita a criação de pasta e arquivo de logs, temos essa opção para utilização em plataformas como Google Cloud Platform, neste caso o logging apenas imprime da tela, sem salvar o log.]
 
 ## Exemplo de uso
 
