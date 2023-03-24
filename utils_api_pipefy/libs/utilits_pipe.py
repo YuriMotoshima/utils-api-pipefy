@@ -82,11 +82,11 @@ class Pipe(Pipefy):
 
                     self.phases = {"phases" : [{ "id": d.get("id"), "nameFase": d.get("name"), "informacoes": [ "firstTimeIn", "lastTimeOut"] } for d in campos_pipefy['phases']]}
                 else:
-                    logging.info(f"Verificar se o token está habilitado ao pipefy.")
-                    raise exceptions(f"Verificar se o token está habilitado ao pipefy.")
+                    logging.info("Verificar se o token está habilitado ao pipefy.")
+                    raise exceptions("Verificar se o token está habilitado ao pipefy.")
 
             else:
-                logging.info(f"Por falta de informação do PIPE, não foi gerado as variávels : [self.phases_id, self.fields, self.phases]")
+                logging.info("Por falta de informação do PIPE, não foi gerado as variávels : [self.phases_id, self.fields, self.phases]")
                 
         except Exception as error:
             logging.info(error)

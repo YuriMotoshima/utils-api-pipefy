@@ -230,7 +230,7 @@ class Pipefy(object):
         """ Show phase: Get a phase by its identifier. """
         try:
           if after:
-            response_fields = response_fields or 'pageInfo { endCursor hasNextPage } edges { node { id title finished_at updated_at createdBy { id name } assignees { id name email } comments { text } comments_count current_phase { name } done due_date fields { name value datetime_value field { id } array_value  } labels { name } createdAt phases_history { phase { name id } created_at duration firstTimeIn lastTimeOut } url } }'
+            response_fields = response_fields or 'pageInfo { endCursor hasNextPage } edges { node { id title createdAt finished_at updated_at createdBy { id name } assignees { id name email } comments { text } comments_count current_phase { name } done due_date fields { name value datetime_value field { id } array_value  } labels { name } createdAt phases_history { phase { name id } created_at duration firstTimeIn lastTimeOut } url } }'
             query = '{ phase(id: %(id)s){ cards_count cards(after:%(after)s) {%(response_fields)s } } }' % {
                 'id': json.dumps(id),
                 'after':json.dumps(after),
@@ -507,7 +507,7 @@ class Pipefy(object):
         """ List cards: Get cards by pipe identifier. """
         try:
           
-          response_fields = response_fields or 'edges { node { id title assignees { id }' \
+          response_fields = response_fields or 'edges { node { id title createdAt assignees { id }' \
                   ' comments { text } comments_count current_phase { name } done due_date ' \
                   'fields { field { id uuid } name value } labels { name } phases_history { phase { name } firstTimeIn lastTimeOut } url } }'
                   
@@ -603,7 +603,7 @@ class Pipefy(object):
         """ Show card: Get a card by its identifier. """
         try:
           
-          response_fields = response_fields or 'title assignees { id } comments { id } comments_count' \
+          response_fields = response_fields or 'title createdAt assignees { id } comments { id } comments_count' \
                   ' current_phase { name } done due_date fields { field { id uuid } name value } labels { name } phases_history ' \
                   '{ phase { name } firstTimeIn lastTimeOut } url '
           query = '{ card(id: %(id)s) { %(response_fields)s } }' % {
