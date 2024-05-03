@@ -1,9 +1,9 @@
-import os
 import json
-import time
 import logging
-from utils_api_pipefy import Engine
-from utils_api_pipefy import exceptions
+import os
+import time
+
+from utils_api_pipefy import Engine, exceptions
 
 if __name__ == "__main__":
     

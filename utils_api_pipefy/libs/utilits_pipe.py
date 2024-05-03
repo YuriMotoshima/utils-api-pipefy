@@ -1,7 +1,9 @@
 import logging
 import time
-from utils_api_pipefy.libs.pipefy import Pipefy
+
 from utils_api_pipefy.libs.excepts import exceptions
+from utils_api_pipefy.libs.pipefy import Pipefy
+
 
 class Pipe(Pipefy):
     def __init__(self, token, host, pipe, nonphases):

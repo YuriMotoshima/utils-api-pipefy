@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 import json
-import time
 import re
+import time
 
 import requests
-from requests.adapters import HTTPAdapter
-
 import urllib3
+from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 from utils_api_pipefy.libs.excepts import exceptions
+
 urllib3.disable_warnings()
 
 

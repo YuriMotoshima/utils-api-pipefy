@@ -1,16 +1,17 @@
-import re
 import logging
-from typing import NoReturn
-from datetime import datetime
-from os import (environ, getcwd)
+import re
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from datetime import datetime
+from os import environ, getcwd
+from typing import NoReturn
 
 import requests
 from requests.adapters import HTTPAdapter
-
 from urllib3.util.retry import Retry
+
 from utils_api_pipefy.libs.excepts import exceptions
 from utils_api_pipefy.libs.utilits_pipe import Pipe
+
 
 class Engine(Pipe):
     def __init__(self, TOKEN=None, HOST=None, PIPE=None, NONPHASES=None):

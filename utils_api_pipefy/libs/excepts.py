@@ -1,7 +1,8 @@
 import json
-import sys
 import logging
-from traceback import (StackSummary, TracebackException, walk_tb)
+import sys
+from traceback import StackSummary, TracebackException, walk_tb
+
 
 class exceptions(Exception):
 
