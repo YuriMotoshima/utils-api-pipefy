@@ -9,15 +9,15 @@ authors = ["Yuri Motoshima <yurimotoshima@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.9"
-requests = "^2.27.1"
-python-dotenv = "^0.19.2"
+python = ">=3.9"
+requests = ">=2.27.1"
+python-dotenv = ">=0.19.2"
 
 [tool.poetry.dev-dependencies]
-pylint = "^2.12.2"
+pylint = ">=2.12.2"
 
 [tool.poetry.group.dev.dependencies]
-isort = "^5.13.2"
+isort = ">=5.13.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
