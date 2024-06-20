@@ -314,7 +314,7 @@ class Engine(Pipe):
             empty_url = self.create_presigned_url(organization_id=organization_id, file_name_path=name_file_attachment)
             open_attachment_binary = open(full_file_path, 'rb')
             
-            session = get_request(headers=self.header)
+            session = get_request(headers=self.headers)
             
             set_attachment_url = session.put(url=empty_url, data=open_attachment_binary)
             
