@@ -313,13 +313,13 @@ class Engine(Pipe):
             full_file_path = fr'{file_path_attachment}/{name_file_attachment}'
             empty_url = self.create_presigned_url(organization_id=organization_id, file_name_path=name_file_attachment)
             open_attachment_binary = open(full_file_path, 'rb')
+            headers = {'Content-Type': 'multipart/form-data'}
+            session = get_request(headers=headers)
             
-            session = get_request(headers=self.headers)
-            
-            set_attachment_url = session.put(url=empty_url, data=open_attachment_binary)
+            set_attachment_url = session.put(url=empty_url['createPresignedUrl']['url'], data=open_attachment_binary)
             
             if set_attachment_url.status_code == 200:
-                return re.findall(r'orgs.*' + name_file_attachment, empty_url)[0]
+                return re.findall(r'orgs.*' + name_file_attachment, empty_url['createPresignedUrl']['downloadUrl'])[0]
             
             else:
                 raise exceptions(f"Verificar o retorno: {set_attachment_url.text} -  Status Code: {set_attachment_url.status_code}.")
