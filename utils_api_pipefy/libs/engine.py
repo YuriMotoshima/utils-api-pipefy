@@ -328,3 +328,40 @@ class Engine(Pipe):
             logging.info(error)
             raise exceptions(error)
         
+
+    def create_attachment_binary_url(self, organization_id:str, name_file_attachment:str, file_binary_attachment:object) -> str:
+        """create_attachment_url Caso rode essa collection em uma cloud, utilizar o caminho './tmp/'
+
+        Args:
+            organization_id (str): ID da Organização do Pipefy
+            name_file_attachment (str): Nome e extenção do arquivo (name.xlsx)
+            file_path_attachment (str): Caminho onde o arquivo está ('./tmp/)
+            
+        Returns:
+            str: regex com url para envio ao Pipefy
+        """
+        def get_request(headers:dict):
+            session_request = requests.Session()
+            retry = Retry(total=5, backoff_factor=45)
+            adapter = HTTPAdapter(max_retries=retry)
+            session_request.mount("https://", adapter)
+            session_request.headers = headers
+            return session_request
+        
+        try:
+            empty_url = self.create_presigned_url(organization_id=organization_id, file_name_path=name_file_attachment)
+            headers = {'Content-Type': 'multipart/form-data'}
+            session = get_request(headers=headers)
+            
+            set_attachment_url = session.put(url=empty_url['createPresignedUrl']['url'], data=file_binary_attachment)
+            
+            if set_attachment_url.status_code == 200:
+                return re.findall(r'orgs.*' + name_file_attachment, empty_url['createPresignedUrl']['downloadUrl'])[0]
+            
+            else:
+                raise exceptions(f"Verificar o retorno: {set_attachment_url.text} -  Status Code: {set_attachment_url.status_code}.")
+        
+        except Exception as error:
+            logging.info(error)
+            raise exceptions(error)
+        
