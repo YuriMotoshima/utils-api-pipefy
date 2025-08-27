@@ -290,7 +290,7 @@ class Engine(Pipe):
             logging.info(error)
             raise exceptions(error)
         
-    def create_attachment_url(self, organization_id:str, name_file_attachment:str, file_path_attachment:str) -> str:
+    def create_attachment_url(self, organization_id:str, name_file_attachment:str, file_path_attachment:str, headers_optional:dict={}) -> str:
         """create_attachment_url Caso rode essa collection em uma cloud, utilizar o caminho './tmp/'
 
         Args:
@@ -314,6 +314,8 @@ class Engine(Pipe):
             empty_url = self.create_presigned_url(organization_id=organization_id, file_name_path=name_file_attachment)
             open_attachment_binary = open(full_file_path, 'rb')
             headers = {'Content-Type': 'multipart/form-data'}
+            headers.update(headers_optional)
+            
             session = get_request(headers=headers)
             
             set_attachment_url = session.put(url=empty_url['createPresignedUrl']['url'], data=open_attachment_binary)
@@ -329,7 +331,7 @@ class Engine(Pipe):
             raise exceptions(error)
         
 
-    def create_attachment_binary_url(self, organization_id:str, v:str, file_binary_attachment:object, headers_optional:dict={}) -> str:
+    def create_attachment_binary_url(self, organization_id:str, name_file_attachment:str, file_binary_attachment:object, headers_optional:dict={}) -> str:
         """create_attachment_url Caso rode essa collection em uma cloud, utilizar o caminho './tmp/'
 
         Args:
