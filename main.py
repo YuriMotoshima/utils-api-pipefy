@@ -17,11 +17,17 @@ if __name__ == "__main__":
         print(json.dumps(eng.phases, ensure_ascii=False, indent=2))
         
         a = time.time()
-        data=eng.run_all_data_phases()
         
-        list_card_id = [ i[0] for i in data ]
-        for card_id in list_card_id:
-            eng.move_card_to_phase(card_id=card_id, destination_phase_id="37644")
+        # data=eng.run_all_data_phases()
+        
+        card = eng.card(id=7641824)
+        
+        new_values = [
+            { "fieldId": "texto_longo_vazio", "value": "texto_longo_vazio_cuan" },
+            { "fieldId": "n_guia_no_prestador", "value": "11892332" }
+            ]
+        
+        t = eng.update_fields_pipe(card_id=25030802, fields=new_values)
             
         print(f"\n\nTempo total: {time.time()-a}\n\n")
         print()
