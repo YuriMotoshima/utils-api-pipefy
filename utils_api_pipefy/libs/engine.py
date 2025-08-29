@@ -359,7 +359,7 @@ class Engine(Pipe):
             
             set_attachment_url = session.put(url=empty_url['createPresignedUrl']['url'], data=file_binary_attachment)
             
-            if set_attachment_url.status_code == 200:
+            if set_attachment_url.status_code < 300:
                 return re.findall(r'orgs.*' + name_file_attachment, empty_url['createPresignedUrl']['downloadUrl'])[0]
             
             else:
