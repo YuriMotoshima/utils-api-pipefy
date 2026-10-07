@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "utils-api-pipefy"
-version = "0.5.3"
+version = "0.5.4"
 description = "Ferramentas para otimizar o consumo paralelizado de api do pipefy, trantando os retornos."
 readme = "README.md"
 repository = "https://github.com/YuriMotoshima/utils-api-pipefy"
@@ -10,14 +10,14 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = ">=3.9"
-requests = ">=2.27.1"
-python-dotenv = ">=0.19.2"
+requests = "^2.31.0"
+python-dotenv = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
-pylint = ">=2.12.2"
-
-[tool.poetry.group.dev.dependencies]
-isort = ">=5.13.2"
+pylint = "^3.0.0"
+pytest = "^8.0.0"
+pytest-cov = "^4.0.0"
+flake8 = "^7.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

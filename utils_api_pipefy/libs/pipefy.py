@@ -14,7 +14,16 @@ urllib3.disable_warnings()
 
 
 class Pipefy(object):
-    """ Integration class with Pipefy rest api. """
+    """
+    Integração com API GraphQL do Pipefy.
+
+    Classe base para consultas e operações CRUD de pipes, phases, fields, cards, labels e tabelas no Pipefy via GraphQL.
+
+    Uso:
+        >>> from utils_api_pipefy import Engine
+        >>> eng = Engine(token="<token>", pipe="<pipe_id>")
+        >>> card = eng.card(id=<card_id>)
+    """
 
     def __init__(self, token, host="app"):
         self.token = token if 'Bearer' in token else 'Bearer %s' % token
@@ -62,18 +71,41 @@ class Pipefy(object):
 
 
     def __prepare_json_dict(self, data_dict):
+        """
+        Normaliza dicionio ao remover aspas duplas em keys numéricas para GraphQL.
+
+        Args:
+            data_dict (dict): Dicionio com dados a serem normalizados
+
+        Returns:
+            str: String JSON normalizada para envio à API GraphQL
+
+        Raises:
+            exceptions: Erro na conversão JSON ou pattern de chave inválido
+        """
         data_response = json.dumps(data_dict)
         rex = re.compile(r'"(\S+)":')
         for field in rex.findall(data_response):
             data_response = data_response.replace('"%s"' % field, field)
-        return data_response
 
 
     def __prepare_json_list(self, data_list):
-      try:
-        return '[ %s ]' % ', '.join([self.__prepare_json_dict(data) for data in data_list])
-      except Exception as err:
-        raise exceptions(err)
+        """
+        Normaliza lista de dicionarios formatando como string JSON para envio à API GraphQL.
+
+        Args:
+            data_list (list): Lista de dicionarios que serão convertidos em campos GraphQL
+
+        Returns:
+            str: String JSON formatada com campos concatenados
+
+        Raises:
+            exceptions: Erro na formatação JSON dos campos
+        """
+        try:
+            return '[ %s ]' % ', '.join([self.__prepare_json_dict(data) for data in data_list])
+        except Exception as err:
+            raise exceptions(err)
 
     def pipes(self, ids=[], response_fields=None, headers={}):
         """ List pipes: Get pipes by their identifiers. """
